@@ -1,9 +1,17 @@
-# Expected final board for the fixture (DESIGN.md §4, §17.6).
-# 12 targets, each with its terminal standing. The rollup at the end must match §17:
+# Expected board after the first actions (DESIGN.md §4, §17.6).
+# Unresolved work prevents completion. The rollup at the end must match §17:
 # 7 accepted, 2 no change needed, 2 needs operator, 1 failed.
 operation: 2026-10-scala-2-upgrade
 board: acme/operation-control#7
-fields: [Standing, Target, Operation, Match, ChangeProposal, Attempts, CostUSD, Claim, ClaimedAt]
+fields: [Standing, Stage, Transition, Target, Operation, Match, ChangeProposal, Attempts, CostUSD, Claim, ClaimedAt]
+# Stage and Transition remain unset for this unstaged operation.
+operation_standing: active
+completion:
+  discovery_complete: true
+  achieved: 9
+  waived: 0
+  unresolved: 3
+  complete: false
 
 targets:
   - target: acme/orders-service
@@ -95,7 +103,7 @@ targets:
     cost_usd: 0.23
     reason: "triage found 2.13.14 (drift) - already satisfied"
 
-dispositions:
+standings:
   accepted: 7
   no change needed: 2
   needs operator: 2

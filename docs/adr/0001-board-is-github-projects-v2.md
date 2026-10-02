@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-01
 - **Deciders:** operator
-- **Related:** `DESIGN.md` §2 (constraint 1), §4; `CONTEXT.md` (Board, Target Standing)
+- **Related:** `DESIGN.md` §2 (constraint 1), §4; `CONTEXT.md` (Board, Stage, Target Standing); ADR 0007
 
 ## Context
 
@@ -26,7 +26,7 @@ standings or concurrency.
 Use **GitHub Projects v2**, and create **exactly one project per operation**. Because a
 repository cannot be an item, each target is represented by a **tracking issue** in the
 control repo, and that issue is the target's entry on the board. The board's fields
-carry the machine-readable fields: `Standing`, `Target`, `Operation`, `Match`,
+carry the machine-readable fields: `Standing`, `Stage`, `Transition`, `Target`, `Operation`, `Match`,
 `ChangeProposal`, `Attempts`, `CostUSD`, `Claim`, `ClaimedAt`. Transition rules are
 enforced in the Board Controller, never in prompts.
 
@@ -35,7 +35,8 @@ enforced in the Board Controller, never in prompts.
 **Positive**
 - Standings live where the operator already works; no extra datastore to run.
 - The board is the single source of truth the supervisor reads on every tick.
-- Native views (group by `Standing`) come for free.
+- Native views group by operation-specific `Stage` or by lifecycle `Standing`;
+  a target's tracking issue retains history across every transition (ADR 0007).
 
 **Negative**
 - The repository-is-not-an-item mismatch forces a **tracking issue per target** — more
