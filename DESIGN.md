@@ -5,11 +5,22 @@ operation has exactly one Operation Repository, and each Operation Repository
 defines exactly one operation.** Those repositories, not this creator repository,
 run and manage their operations.
 
-**Status: operation-repository and creator contracts agreed.** There is
-no runtime implementation yet. Copilot isolation and metering, target-local claim
-atomicity and private-data guarantees are validation gates, not claimed capabilities.
-The creator's architecture and implementation sequence are defined in §20.
-These are design contracts, not claims that agents or helpers have been implemented.
+**Status: initial agent-context base implemented.** ADR 0010 records the operator's
+correction: operation repositories contain Markdown context, agents, skills and a
+dev container configuration, not a copied deterministic application. ADR 0011
+requires all work to start within Copilot sessions in dev containers, with
+container-provided Copilot and `gh`, not GitHub Actions triggers.
+The Creator/preparation skill
+and `templates/operation/` implement the preparation-facing agent context.
+Approval capture, materialisation and target execution remain unimplemented.
+Copilot isolation/metering, target-local claim atomicity and private-data guarantees
+remain validation gates.
+
+**Historical design:** controller/runtime-base descriptions in §§3.5, 14, 16 and 20
+are retained as earlier design detail, not the current implementation prescription.
+Workflow/controller examples and explicit Copilot/`gh` pins elsewhere are historical
+too. ADRs 0010/0011 take precedence for packaging, execution and build order; evidence and authority
+contracts elsewhere remain requirements, not proven capabilities.
 
 `CONTEXT.md` defines the domain language. ADRs record the decisions and the earlier
 choices they supersede. Platform artifacts retain their platform names: a target's
@@ -20,8 +31,8 @@ tracking issue is a Projects v2 item; a change proposal is a draft pull request.
 ## 1. Goals, non-goals and agreed decisions
 
 Create an inspectable, independently runnable repository **after** its initial
-definition has been approved. Its manifest, agents, skills, workflows and local
-controller source describe the operation's structure; a selected approved revision
+definition has been approved. Its manifest, agents, skills and dev container
+configuration describe the operation's structure; a selected approved revision
 can become a starting point for another operation.
 
 An operation discovers and qualifies targets, advances them towards its goal, and
@@ -34,8 +45,8 @@ task and at most one proposal per task generation and target.
 | Repository identity | One operation per repository; revisions retain the same intent |
 | Creation | After initial definition approval; preserve approval and provenance |
 | Activation | Explicit operator decision after readiness checks; creation does not start work |
-| Agent runtime | Pinned GitHub Copilot CLI invoked by the operation's GitHub Actions workflows |
-| Local runtime | Operation-owned controller source and agent/skill definitions; no live dependency on the creator |
+| Agent runtime | Copilot sessions in dev containers; container creation supplies Copilot and `gh` |
+| Local runtime | Operation-owned agent/skill definitions and container configuration; no live dependency on the creator |
 | Approved unit | Full executable definition, not just specification YAML |
 | Definition storage | Protected definition branch; each execution uses an approved definition commit |
 | Records | Separate append-only records branch, plus the operation's issues and associated board |
@@ -531,24 +542,29 @@ Same-intent revisions retain repository, operation identity and board. Unrelated
 intent requires a new operation. A concluded/archived operation cannot restart from
 a push or webhook alone; explicit reactivation and unarchiving are required.
 
-## 11. GitHub Actions and readiness
+## 11. Copilot sessions and readiness
 
-All operational workflows reside in the operation repository and execute approved
-definition commits, never the creator's moving branch or unapproved target files.
+Preparation and operational work start only within Copilot sessions in dev containers.
+Use approved definition commits, never the creator's moving branch or unapproved
+target instructions. Container setup supplies Copilot and `gh`; record actual
+versions in session evidence rather than pinning them in `.tool-versions`.
 
-| Workflow | Responsibility |
+| Session activity | Responsibility |
 |---|---|
-| `activate.yml` | authenticate operator/delegate, validate readiness and start the approved revision |
-| `revise.yml` | support interrogation and reviewed same-intent definition proposals |
-| `scope.yml` | read-only reconnaissance |
-| `explore.yml` | deterministic discovery, qualification and controlled annotations |
-| `act.yml` | one claimed generation, isolated coding/acceptance and trusted publication |
-| `reconcile.yml` | stage/standing reconciliation, credit settlement and valid ownership maintenance |
-| `on-pr-event.yml` | correlate proposals with operation/generation/revision, verify merges |
-| `control.yml` | authorised resume/reset/waive/recovery/stop/reactivation |
+| Activation | authenticate operator/delegate, validate readiness and start the approved revision |
+| Revision | support interrogation and reviewed same-intent definition proposals |
+| Reconnaissance | read-only scope assessment |
+| Exploration | deterministic discovery, qualification and controlled annotations |
+| Action | one claimed generation, isolated coding/acceptance and trusted publication |
+| Reconciliation | inspect proposals, verify merges, settle credits and maintain valid ownership |
+| Operator controls | authorised resume/reset/waive/recovery/stop/reactivation |
+
+No workflow, schedule, push or proposal event initiates these activities. A subsequent
+session reads durable records and current GitHub evidence to resume or reconcile.
+Opening a session alone does not activate the operation.
 
 Before any target execution, require an approved payload, matching active-revision
-record, valid tool pins, manifest closure, named authority, correct repository/board
+record, supported container-provided tools, manifest closure, named authority, correct repository/board
 visibility, authorised GitHub/Copilot access, available approved models, current
 reconnaissance, verified claim protocol, isolated effective Copilot configuration and
 authoritative attributable credit metering. Missing bindings or guarantees produce
@@ -559,11 +575,11 @@ capabilities. Credentials are external bindings, never manifest contents or reus
 definition data. The creator creates repository resources and reports required external
 setup; access grants and installations remain operator-managed (§20).
 
-Actions concurrency groups prevent duplicate local dispatch, while the target claim
-prevents cross-operation overlap. Authenticate command and webhook provenance.
+Target claims must prevent conflicting work across sessions and operations.
+Authenticate operator decisions and verify event provenance when inspecting GitHub evidence.
 Ignore stale events for current-state mutation; audit their historical association.
 Normal pause/drain permits resolution of existing work, not new task dispatch.
-Emergency stop also cancels active jobs and blocks publication; recover claims
+Emergency stop also halts active session work and blocks publication; recover claims
 separately. Stopped operations may reconcile outstanding records without authorising
 new target work. Archive only after outstanding actors, claims and proposals are resolved.
 

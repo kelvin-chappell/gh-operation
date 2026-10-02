@@ -9,6 +9,9 @@
 
 ## Context and decision
 
+**Implementation corrections:** ADR 0010 supersedes controller packaging; ADR 0011
+supersedes the GitHub Actions runtime and explicit Copilot tool pins below.
+
 A shared control repository hides the boundary between reusable structure and one
 operation's live execution. Instead, create exactly one operation repository for
 each operation, after approving its initial complete executable definition. It owns

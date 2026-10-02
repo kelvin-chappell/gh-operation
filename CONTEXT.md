@@ -17,9 +17,9 @@ belongs to a new operation.
 *Not to be confused with:* the intent that starts it, or with any one exploration or
 action within it.
 
-**Operation Repository** — The repository that defines and carries out exactly one
-operation, and owns its operational record. Each operation has exactly one such
-repository, created after its initial definition has been approved.
+**Operation Repository** — The shared context and agent guidance for carrying out
+exactly one operation, together with its operational record. Each operation has
+exactly one such repository, created after its initial definition has been approved.
 
 **Preparation** — Turning an intent into an approved operation definition and
 creating its operation repository. Its AI-credit limit and usage are accounted for
@@ -117,8 +117,9 @@ ordered set of stages and transitions with their tasks and acceptance.
 **Specification Revision** — One identifiable version of an operation's specification.
 A revision changes the definition without, by itself, creating a different operation.
 
-**Operation Definition** — The complete description of what an operation is to do
-and how it is to be carried out, including its specification and prescribed behaviour.
+**Operation Definition** — The specification and shared context that equip agents
+to carry out an operation: its intent, scope, language, milestones, responsibilities
+and working constraints.
 
 **Execution Revision** — An identifiable, approved version of an operation definition
 that governs work. Changing the specification or the prescribed behaviour requires

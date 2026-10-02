@@ -22,9 +22,9 @@ But three requirements are load-bearing and unusual:
 
 ## Decision
 
-The following records the original runtime choice. The current choice is pinned
-Copilot CLI in GitHub Actions with local controller code, a structured audit and
-only available permitted traces, as recorded in ADR 0008.
+The following records the original runtime choice. ADRs 0010/0011 establish the
+current choice: agent context executed within Copilot sessions in dev containers,
+with structured audit and only available permitted traces.
 
 Build a **minimal custom loop** over an LLM API with hand-written GitHub tools. No agent
 framework.

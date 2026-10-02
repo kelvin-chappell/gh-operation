@@ -1,6 +1,6 @@
 # 0006 — The runtime is GitHub Actions, with supervision as a scheduled job
 
-- **Status:** Accepted
+- **Status:** Superseded by [0011](0011-copilot-session-execution.md)
 - **Date:** 2026-10-01
 - **Deciders:** operator
 - **Related:** `DESIGN.md` §1, §2, §11, §12; ADR 0008

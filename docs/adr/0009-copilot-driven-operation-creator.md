@@ -7,6 +7,11 @@
 
 ## Decision and rationale
 
+**Packaging correction:** ADR 0010 supersedes the copied controller/runtime-base
+assumption below. Preparation, authentic approval and inactive handover remain;
+the maintained base now consists primarily of agent context. ADR 0011 replaces
+workflow-triggered execution with Copilot sessions in dev containers.
+
 Make this repository a Copilot workspace taking an intent through interrogation,
 assembly, validation, authentic approval and inactive handover. Maintain a tested,
 versioned runtime base and curated starting points; generate operation-specific

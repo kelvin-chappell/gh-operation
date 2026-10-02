@@ -2,12 +2,16 @@
 
 This repository will **create repositories that define concrete operations**. Each
 operation has exactly one independently runnable **Operation Repository**, containing
-its manifest, specification, agents, skills, workflows and local controller source.
+its domain context, specification, agent definitions, skills and dev container setup.
 Those repositories run and manage their operations, not this creator repository.
 
-**Status: operation-repository and creator architectures agreed.** There is no
-runtime or generator implementation yet. The documentation records the confirmed
-boundary and the validation gates required before an operation may execute.
+**Status: initial agent-context base implemented.** The Creator agent, preparation
+skill and `templates/operation/` provide Markdown-first definitions, four operational
+roles and a shared operation-cycle skill. Work starts only within Copilot sessions
+in dev containers, not GitHub Actions workflows.
+Authentic approval capture, materialisation and target execution are not implemented.
+The earlier TypeScript application scaffolding and Node tooling have been removed.
+No operation repository has been created by this implementation.
 
 ## Start here
 
@@ -17,10 +21,39 @@ boundary and the validation gates required before an operation may execute.
 | [`DESIGN.md`](DESIGN.md) | Operation-repository contract; §20 defines the creator architecture and build sequence |
 | [`docs/adr/`](docs/adr/README.md) | Decisions and superseded alternatives |
 | [`fixtures/`](fixtures/README.md) | Synthetic preparation and operation contract cases |
+| [Creator](.github/agents/creator.agent.md) | Preparation entry point |
+| [Preparation skill](.github/skills/prepare-operation/SKILL.md) | Interrogation, assembly, review and blocked/verified handover |
+| [Operation base](templates/operation/MANIFEST.md) | Files assembled into an independently inspectable operation definition |
+
+Select `creator` with Copilot's `/agent` command and supply an intent. Preparation
+asks for an approved private workspace outside this checkout. The template is a
+draft with explicit `{{...}}` fields, not an approved runnable operation. Review those
+fields and the complete definition within the session before approval.
+
+Dev container creation supplies Copilot and `gh`, so neither is declared in
+`.tool-versions`. The retained pin is for the dev container generator. There is no
+Node dependency, application build or process-triggering workflow. Record actual
+tool versions in session evidence; structural checks do not establish operational
+enforcement.
+
+Each agent declares its model in YAML frontmatter. Creator and Actor use `gpt-6-sol`
+for definition synthesis and repository changes; Supervisor uses `gpt-6.1-sol` for
+lifecycle reasoning;
+Elicitor uses `gpt-5.4` for structured clarification; Explorer and the
+tool-free credit-meter probe use `gpt-5.4-mini` for bounded evidence collection
+and minimal responses. These are starting defaults, not proof of model availability
+or data-handling approval. Review operation-specific changes before use.
+
+**Before every pull request**, including drafts, obtain independent adversarial
+review of the exact final diff. All non-reviewer agents use OpenAI models; the single
+`reviewer` uses Anthropic's `claude-opus-4.8`, read-only in a separate agent context.
+Unknown authorship or a provider-policy violation blocks publication. Resolve findings and repeat
+review after edits; missing or invalid review blocks publication. This session-level
+policy applies here and in generated operations, separately from human approval.
 
 ## What this repository will do
 
-Provide a **Creator agent**, preparation skills, a tested runtime base, curated
+Provide a **Creator agent**, preparation skills, a maintained agent-context base, curated
 starting points and deterministic validation/materialisation tools:
 
 ```text
@@ -28,8 +61,9 @@ intent -> interrogate/inspect -> assemble -> validate -> human approval
        -> create and verify repository resources -> inactive handover
 ```
 
-Copilot generates operation-specific specifications, agent/skill content and bounded
-adapters. It does not rewrite safety machinery per operation. Drafts, review artifacts,
+Copilot assembles operation-specific definitions and agent/skill content. Small
+deterministic helpers require a demonstrated need; a copied application is not the
+base. Drafts, review artifacts,
 credit accounting and creation journals live in resumable private workspaces outside
 this public checkout. Explicit predecessor revisions are inspected as quarantined
 data and adapted onto a supported base, not automatically loaded into the Creator.
@@ -56,15 +90,16 @@ operator approves it **before** the operation repository is created. Preserve th
 approval and provenance, then require a separate activation after readiness and
 reconnaissance. Creation does not automatically start target changes.
 
-An operation repository runs pinned **Copilot CLI in GitHub Actions**, using local
-agent/skill definitions and controller source. Its versioned manifest and overview
+An operation repository runs through **Copilot sessions in a dev container**, using
+local agent/skill definitions once execution gates are proven. Its manifest and overview
 make the structure inspectable. Approved definitions live on a protected branch;
 append-only operational records live on a separate branch in the same repository.
 It owns its tracking issues and associated Projects v2 board.
 
 Only approved operation configuration governs execution. Target files remain
 untrusted data. Qualification, claims, credit accounting, publication and completion
-are enforced by trusted code, not granted because a model asserted success.
+require independently verified mechanisms, not a model's assertion of success.
+The current base describes these requirements but does not implement enforcement.
 
 ## Stages, actions and completion
 
@@ -109,7 +144,8 @@ automatically freeing claims.
 
 ## Build sequence
 
-`DESIGN.md` §20.9 starts with proving authentic approval, isolation and accounting
-boundaries; establishing the tested operation runtime base; building pure preparation
-tools; adding the Creator experience; and testing materialisation/recovery and handover.
-The agent, skills, runtime and helpers are planned components, not implemented commands.
+ADRs 0010/0011 correct the earlier runtime-heavy and workflow-triggered sequence in
+`DESIGN.md`. Start with
+agent context and local preparation; next prove approval, isolation and accounting
+boundaries, then implement the smallest materialisation/recovery and execution
+mechanisms needed. Session startup and structural review are not operational readiness.
