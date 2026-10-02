@@ -8,13 +8,13 @@
 ## Context
 
 Exploration surfaces candidate repositories and must decide which belong to the
-mission. Some criteria are mechanical, but others need reading content — *"which Scala
+operation. Some criteria are mechanical, but others need reading content — *"which Scala
 versions does this repository use?"* — where a model could help. The tempting design is
 to let the model decide membership, especially on borderline cases.
 
 The hazard: a model-decided target set is not reproducible. A rerun could admit or drop
 repositories, and no one could explain why one repo was in and another out. The set of
-repositories a mission touches is exactly the thing that must be auditable.
+repositories an operation touches is exactly the thing that must be auditable.
 
 ## Decision
 
@@ -27,8 +27,8 @@ Machine-checkable criteria are a required rubric item before the specification f
 ## Consequences
 
 **Positive**
-- Target sets are reproducible and explainable: rerunning a mission yields the same set.
-- Qualification is auditable — the reason a repo is in the mission is a checkable rule.
+- Target sets are reproducible and explainable: rerunning an operation yields the same set.
+- Qualification is auditable — the reason a repo is in the operation is a checkable rule.
 - Ambiguity is pushed into the specification, where the operator can see and approve it.
 
 **Negative**

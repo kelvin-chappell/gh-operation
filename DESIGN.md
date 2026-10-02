@@ -1,4 +1,4 @@
-# Mission Runner — Design
+# Operation Runner — Design
 
 A system of **elicitor**, **supervisor**, **explorer**, and **actor** agents that operate
 over a collection of repositories. An **operator** states an **intent**; the system
@@ -41,7 +41,7 @@ in `backticks`:
 - Be **idempotent and resumable** — reruns never double-open change proposals or
   corrupt standings.
 - **Scope before spending**: reconnaissance reports the size and projected cost of a
-  mission before any repository is touched (§9).
+  operation before any repository is touched (§9).
 
 ### Non-goals
 - Perfect autonomous judgement with no human gate. The specification freeze and the
@@ -63,28 +63,28 @@ in `backticks`:
 | Models | Only models available through Freebuff |
 | Autonomy | Operator approves the specification; every change proposal is a draft the operator merges (initially) |
 | Qualification | Deterministic validator only; the explorer's LLM records evidence, never promotes |
-| Board | One Projects v2 project per mission |
+| Board | One Projects v2 project per operation |
 | Re-entry after failure | `failed` is terminal; only an operator `reset` returns a target to `ready` with a fresh attempt budget |
 | Transient failures | Infrastructure failures retry at the job level (≤3, capped backoff) and never consume an `Attempt` |
 | Resolving `needs operator` | Explicit operator commands: `resume` → `ready`, `dismiss` → `excluded`; reconciliation never transitions on its own |
-| Reconnaissance gate | A mission cannot go `active` without a reconnaissance for the current specification hash (operator override allowed) |
-| Reconnaissance carry-over | A forecast, not a reservation: the real mission re-discovers; reconnaissance informs only the estimate and the plan |
+| Reconnaissance gate | An operation cannot go `active` without a reconnaissance for the current specification hash (operator override allowed) |
+| Reconnaissance carry-over | A forecast, not a reservation: the real operation re-discovers; reconnaissance informs only the estimate and the plan |
 | Content-probe freshness | Content is re-probed at qualification, and triage re-reads; caches live within a single run only |
-| Specification revision | A revision is a **new mission** (new id, new board); the old one concludes or is abandoned |
-| Cross-mission collision | An open automation change proposal on the repository from any other mission → `needs operator` |
+| Specification revision | A revision is a **new operation** (new id, new board); the old one concludes or is abandoned |
+| Cross-operation collision | An open automation change proposal on the repository from any other operation → `needs operator` |
 | Language/runtime | TypeScript on Node 20 with `@octokit/*` (v1) |
 | Supervision location | A scheduled GitHub Actions job |
-| First-mission estimate | Accept the `heuristic_v1` estimate; no mandatory pilot |
+| First-operation estimate | Accept the `heuristic_v1` estimate; no mandatory pilot |
 | Control repo visibility | **Public**: the control plane, board, and session logs are all public |
 | Target sensitivity (v1) | Public / non-sensitive repositories only, enforced by the specification's scope |
-| Session-log retention | Full traces for 90 days (or the last N missions), then a summary + trace digest |
+| Session-log retention | Full traces for 90 days (or the last N operations), then a summary + trace digest |
 | Already-compliant targets | Action triage marks `no change needed`; no change proposal is opened |
 | Task divergence | Task intent fixed; implementation may adapt within the specification's bounds |
 | First deliverable | This design document |
 | Criteria depth | Metadata **and** file-content criteria (e.g. "which Scala versions does this repo use?"); the deterministic validator checks the extracted content |
 | Existing change proposal on a target | Detect the conflict and mark `needs operator`; the actor neither duplicates, adopts, nor silently skips |
 | Adaptation bounds | May add new in-scope files; dependency and lockfile changes are **forbidden** and become `needs operator` |
-| Mission conclusion | Concludes when every target has a **disposition**, the envelope is exhausted, or the operator declares it done; `no change needed` counts as done |
+| Operation conclusion | Concludes when every target has a **disposition**, the envelope is exhausted, or the operator declares it done; `no change needed` counts as done |
 
 Settled (DECIDED): **TypeScript on Node 20** with `@octokit/*` for the control plane.
 Octokit's REST + GraphQL coverage is the shortest path to Projects v2. Python remained
@@ -159,7 +159,7 @@ rubric, then freezes it. It produces one specification in two files: `explorer.y
 issue conversation, driven by a workflow. See §10.
 
 ### 3.2 Supervisor
-A stateless planning function invoked at mission start and on every reconciliation
+A stateless planning function invoked at operation start and on every reconciliation
 tick. It reads the frozen specification, the current standings, the envelope, and live
 rate-limit headroom; it emits:
 - the **exploration matrix** (how many explorations, and how the search space is
@@ -195,11 +195,11 @@ Board Controller is a mechanism, not an agent.
 
 ---
 
-## 4. Mission lifecycle and target standings
+## 4. Operation lifecycle and target standings
 
-### Mission standing
+### Operation standing
 
-The mission as a whole moves through:
+The operation as a whole moves through:
 
 `draft` (intent stated, interrogation open) → `specified` (specification frozen) →
 `scoped` (reconnaissance run) → `active` (exploration and action underway) →
@@ -213,7 +213,7 @@ The board (Projects v2) holds one entry per target:
 |---|---|---|
 | `Standing` | single select | the target's standing lifecycle (below) |
 | `Target` | text | `owner/name` of the target repository |
-| `Mission` | text | mission id |
+| `Operation` | text | operation id |
 | `Match` | text | the exploration's evidence / matched criteria |
 | `ChangeProposal` | text | the change proposal's URL once opened |
 | `Attempts` | number | action attempts so far |
@@ -253,10 +253,10 @@ Recovery edges (operator-initiated):
   conflicting or foreign change proposal on the working branch (DECIDED): the action
   records the conflict and stops. It does not duplicate the proposal, adopt it, or
   silently skip the target — the operator decides.
-- **Cross-mission collision (DECIDED).** Branch names embed the mission id, so a
-  repository already handled by another mission would not trip the branch-level check.
+- **Cross-operation collision (DECIDED).** Branch names embed the operation id, so a
+  repository already handled by another operation would not trip the branch-level check.
   Before acting, an action also checks whether the repository already has an open
-  automation change proposal from *any* mission, or is `in action` elsewhere; if so the
+  automation change proposal from *any* operation, or is `in action` elsewhere; if so the
   target goes to `needs operator` rather than opening a competing proposal.
 - **`failed` is terminal (DECIDED).** Only an operator `reset` returns the target to
   `ready` with a **fresh attempt budget**. `max_attempts` bounds the automatic retries
@@ -271,10 +271,10 @@ Recovery edges (operator-initiated):
   lost runner, or a network timeout is retried at the **job level** — at most 3 times,
   exponential backoff with jitter, capped — and never increments `Attempts`.
   Substantive failures do, and advance the target toward `failed`.
-- **Mission conclusion (DECIDED).** A mission concludes when *any* of: every target has
+- **Operation conclusion (DECIDED).** An operation concludes when *any* of: every target has
   a **disposition**, the envelope is exhausted, or the operator declares it done.
   `no change needed` is a disposition that counts as done, so a target that needs no
-  change never keeps a mission open.
+  change never keeps an operation open.
 
 Transition rules are enforced in the Board Controller, not in prompts. An agent
 *requests* a transition; the controller validates that the current standing and the
@@ -284,13 +284,13 @@ lease permit it.
 
 ## 5. Data model
 
-The specification is committed to the control repo under `missions/<mission-id>/` so
-every mission is reproducible and pinned to its frozen specification. It is one
+The specification is committed to the control repo under `operations/<operation-id>/` so
+every operation is reproducible and pinned to its frozen specification. It is one
 specification made of two files.
 
 ### 5.1 Exploration specification (`explorer.yaml`)
 ```yaml
-mission: 2026-10-cve-sweep
+operation: 2026-10-cve-sweep
 scope:
   owners: [acme, acme-labs]        # org/user allow-list
   exclude_repos: [acme/dotfiles]
@@ -326,7 +326,7 @@ qualification:
 
 ### 5.2 Action specification (`actor.yaml`)
 ```yaml
-mission: 2026-10-cve-sweep
+operation: 2026-10-cve-sweep
 task:
   title: "Add Dependabot config for Go modules"
   kind: code_change              # code_change | config_change | docs
@@ -338,10 +338,10 @@ acceptance:
   test: "go test ./..."
   lint: "golangci-lint run"
 pr:                                # platform: how the change proposal is opened
-  branch: "automation/{{mission}}-{{repo_slug}}"
+  branch: "automation/{{operation}}-{{repo_slug}}"
   title: "{{task.title}}"
   body_template: .github/pr-template.md
-  labels: [automation, mission/{{mission}}]
+  labels: [automation, operation/{{operation}}]
   draft: true
 triage:
   on_already_satisfied: no_change_needed   # no_change_needed | attempt_anyway
@@ -367,8 +367,8 @@ escalation:
 ```
 
 ### 5.3 Tracking issue (one per target)
-Created in the control repo; the body records the target repository, the mission id,
-and the exploration's evidence. Labels: `mission/<id>`, `target`. This issue **is** the
+Created in the control repo; the body records the target repository, the operation id,
+and the exploration's evidence. Labels: `operation/<id>`, `target`. This issue **is** the
 target's entry on the board.
 
 ---
@@ -398,12 +398,12 @@ target's entry on the board.
 - Dedup by repository id across partitions **and** across reruns (query existing
   targets before creating).
 - Cap pages per partition (`max_pages`) to bound the worst case.
-- Cache content probes per repository so a file is fetched at most once per mission, and
+- Cache content probes per repository so a file is fetched at most once per operation, and
   probe only after metadata filters have shrunk the set.
 
 **Tools granted:** `search.code`/`search.repos` (read), `contents.read` on target
 repos (for content criteria), `issues.create` in the control repo, `projects.write`
-(scoped to the mission project). No write access to target repositories. No secrets
+(scoped to the operation project). No write access to target repositories. No secrets
 from target repositories.
 
 ---
@@ -413,10 +413,10 @@ from target repositories.
 **Loop (per claimed target):**
 1. Claim atomically (see §4); bail if lost.
 2. **Detect an existing change proposal** on the branch (ours, foreign, or
-   conflicting). If one exists that is not this mission's own resumable branch, record
+   conflicting). If one exists that is not this operation's own resumable branch, record
    the conflict and move the target to `needs operator` — do not duplicate, adopt, or
    skip (DECIDED). Also check for an open automation change proposal on the repository
-   from any *other* mission (§4) and treat it as a conflict the same way.
+   from any *other* operation (§4) and treat it as a conflict the same way.
 3. Clone the target repository shallowly; check out the branch.
 4. **Triage** (cheap model + file inspection): if the target already satisfies the
    task, move it to `no change needed` and stop. No change proposal is opened; the
@@ -441,14 +441,14 @@ from target repositories.
     `Attempt`; only substantive failures advance the target toward `failed`.
 
 **Idempotency:** the branch name is deterministic. If the branch or change proposal
-already exists *and belongs to this mission* (its own resumable branch), the action
+already exists *and belongs to this operation* (its own resumable branch), the action
 updates it rather than creating a second one. If it pre-exists from another source — a
 foreign branch, a human's change proposal, or a conflicting change — the action does not
 touch it: it moves the target to `needs operator` (DECIDED). `Attempts` is incremented
 so reconciliation can enforce `max_attempts`.
 
 **Tools granted:** `contents.write` on the target repository, `pull_requests.write` on
-the target repository, `projects.write` on the mission project, `actions` logs read.
+the target repository, `projects.write` on the operation project, `actions` logs read.
 Secrets available to the *runner* (for pushing) are never passed into the model's
 context.
 
@@ -456,7 +456,7 @@ context.
 
 ## 8. Supervision: allocation and model selection
 
-Invoked at mission start and on each schedule tick (e.g. every 15 min).
+Invoked at operation start and on each schedule tick (e.g. every 15 min).
 
 **Inputs:** eligible targets per standing, remaining budget, live `GET /rate_limit`
 headroom (core + search), runner concurrency ceiling, per-action historical cost/time.
@@ -511,7 +511,7 @@ cannot trust.
 
 ## 9. Reconnaissance (scoping mode)
 
-Purpose: answer "how big is this mission and what will it cost?" **before** the
+Purpose: answer "how big is this operation and what will it cost?" **before** the
 specification is frozen and **before** any repository is modified. This is the mode to
 run first, and to re-run whenever the criteria change.
 
@@ -524,28 +524,28 @@ run first, and to re-run whenever the criteria change.
   `GET /search/repositories`, metadata reads, and content reads needed for the report
   are permitted.
 - Output is a **Feasibility Report**, not a change to the board. It is posted on the
-  mission issue and archived as an artifact.
+  operation issue and archived as an artifact.
 - Safe and cheap to re-run; the report shows deltas against the previous
   reconnaissance.
-- The report **leads with the target count** (DECIDED): v1 assumes small missions, so
+- The report **leads with the target count** (DECIDED): v1 assumes small operations, so
   the first number the operator must see is how many repositories would be acted on. It
   also states the implied review load, since every change proposal is a draft the
   operator merges. v1 does not pace work to the operator's review capacity; it surfaces
   the load and lets the operator tune criteria and re-run.
-- **Required before activation (DECIDED).** A mission cannot go `active` without a
+- **Required before activation (DECIDED).** An operation cannot go `active` without a
   reconnaissance for the current specification hash, unless the operator explicitly
   overrides. This is what enforces "scope before spending" (§10).
-- **A forecast, not a reservation (DECIDED).** The real mission re-runs discovery;
+- **A forecast, not a reservation (DECIDED).** The real operation re-runs discovery;
   reconnaissance informs only the estimate and the partition/concurrency plan. No
   candidate, probe value, or qualification carries over. The actual-vs-forecast target
   count is reported so drift is visible.
 
 **Feasibility Report**
 ```yaml
-mission: 2026-10-cve-sweep
+operation: 2026-10-cve-sweep
 specification_hash: <sha256>
 mode: reconnaissance
-targets: 366                    # headline: repositories this mission would act on.
+targets: 366                    # headline: repositories this operation would act on.
                                 # The operator sees review load before approving.
 size:
   candidates_seen: 4820
@@ -554,7 +554,7 @@ size:
   matched_by_content: 27        # matched only via content criteria, not metadata
   borderline: 27          # default policy applied: include
   estimated_eligible: 366
-  estimate_basis: heuristic_v1   # heuristic_v1 | prior_mission | pilot
+  estimate_basis: heuristic_v1   # heuristic_v1 | prior_operation | pilot
 quota:
   search_calls_used: 96
   search_quota_remaining: 124
@@ -579,16 +579,16 @@ recommendations:
 ```
 
 **Cost estimation method**
-1. **First mission** — heuristic from repository metadata (size, file count, primary
+1. **First operation** — heuristic from repository metadata (size, file count, primary
    language, presence of CI, test command discovery) multiplied by configurable
    per-tier token and runner-minute rates.
-2. **Later missions** — use observed per-action cost and wall-clock from prior session
+2. **Later operations** — use observed per-action cost and wall-clock from prior session
    logs as the prior; report estimate vs actual so the prior self-corrects.
 3. **Optional pilot** — open real change proposals on a small random sample of matched
    repositories, measure, then extrapolate to the full set. The most accurate option,
    and the only one that spends real work, so it is opt-in.
 
-**Feedback into interrogation.** The report lands on the mission issue. The operator
+**Feedback into interrogation.** The report lands on the operation issue. The operator
 tunes criteria and re-runs the reconnaissance — at zero repository risk — until size and
 cost sit inside the envelope, then approves the specification freeze (§10). The frozen
 specification records the `estimate_basis` so a later cost overrun can be traced to a bad
@@ -601,7 +601,7 @@ estimate vs bad work.
 Purpose: convert a vague intent into an unambiguous specification the machine can
 check.
 
-1. The operator opens a **mission issue** with a free-text intent and an envelope.
+1. The operator opens an **operation issue** with a free-text intent and an envelope.
 2. A workflow runs the Elicitor in a bounded interview loop over the issue comments. It
    asks targeted questions and **challenges** weak answers:
    - "You said 'popular repos' — give a star floor or I'll default to 0."
@@ -610,14 +610,14 @@ check.
 3. The Elicitor drafts `explorer.yaml` and `actor.yaml`, posts them, and names which
    rubric entries remain unresolved.
 4. Loop until all rubric entries pass; then it writes the specification into
-   `missions/<id>/` via a change proposal and requests explicit operator **approval** on
+   `operations/<id>/` via a change proposal and requests explicit operator **approval** on
    that proposal.
-5. Approval merges the specification. The mission id and a specification **hash** are
-   frozen; the board `Mission` field and every tracking issue reference them. Changing
-   the specification later requires a **new mission**: the new mission re-runs
-   interrogation, reconnaissance, and discovery under a new id, and the old mission
+5. Approval merges the specification. The operation id and a specification **hash** are
+   frozen; the board `Operation` field and every tracking issue reference them. Changing
+   the specification later requires a **new operation**: the new operation re-runs
+   interrogation, reconnaissance, and discovery under a new id, and the old operation
    concludes or is abandoned (DECIDED). This is why reconnaissance is required before a
-   mission goes `active` (§9).
+   operation goes `active` (§9).
 
 Rubric (must be fully specified before freeze): scope allow/deny; target sensitivity
 (public/non-sensitive only in v1); every criterion machine-checkable; partition
@@ -633,8 +633,8 @@ Workflows in the control repo:
 
 | Workflow | Trigger | Duty |
 |---|---|---|
-| `elicit.yml` | issue comment on a `mission` issue | drive the interrogation loop |
-| `start-mission.yml` | `workflow_dispatch` / specification change proposal merged | initialize the board, emit the first plan |
+| `elicit.yml` | issue comment on a `operation` issue | drive the interrogation loop |
+| `start-operation.yml` | `workflow_dispatch` / specification change proposal merged | initialize the board, emit the first plan |
 | `explore.yml` | `workflow_dispatch` with a matrix | run explorations |
 | `scope.yml` | `workflow_dispatch` (`mode: reconnaissance`) | read-only exploration sweep; posts a feasibility report (§9) |
 | `act.yml` | `repository_dispatch` / schedule | claim and process `ready` targets |
@@ -645,7 +645,7 @@ Workflows in the control repo:
 Mechanics:
 - **Fan-out:** `strategy.matrix` sized by the supervisor's plan; matrix values passed
   as JSON from the planning job's output.
-- **Concurrency:** a `concurrency` group per mission caps live explorations and actions.
+- **Concurrency:** a `concurrency` group per operation caps live explorations and actions.
   Job-level `concurrency` keyed by repository slug prevents two actions on the same
   target.
 - **Claiming:** `Claim`/`ClaimedAt` written through the Projects GraphQL API. Use a
@@ -676,13 +676,13 @@ Mechanics:
   operator merges. Autonomy is not expanded until a reviewed pilot justifies it.
 - **Public control repo (v1).** The control plane, the board, and the session logs are
   all public. This is why v1 targets only public / non-sensitive repositories: the
-  specification's scope refuses a private one, so a mission cannot leak a private
+  specification's scope refuses a private one, so an operation cannot leak a private
   repository through its board or its traces.
 - **Reconnaissance is read-only:** the scope workflow requests a read-only installation
   token, so reconnaissance cannot create issues, targets, branches, or change proposals
   even if the code misbehaves.
-- **Budget guardrails:** a hard USD ceiling per mission and per target; the supervisor
-  pauses the mission when the reserve is breached.
+- **Budget guardrails:** a hard USD ceiling per operation and per target; the supervisor
+  pauses the operation when the reserve is breached.
 - **Audit:** every standing transition and model call is logged with the
   specification hash, session id, model, tokens, and cost.
 
@@ -690,17 +690,17 @@ Mechanics:
 
 ## 13. Observability and cost
 
-- **Per-target cost** accumulated in `CostUSD`; **per-mission** rollup in a tracking
+- **Per-target cost** accumulated in `CostUSD`; **per-operation** rollup in a tracking
   issue comment updated each tick.
 - **Metrics:** targets by standing, throughput (change proposals/day), success rate per
   attempt, escalation rate, search-quota utilization, mean wall-clock per action.
-- **Dashboards:**  a generated Markdown summary section on the mission issue is enough
+- **Dashboards:**  a generated Markdown summary section on the operation issue is enough
   for v1; a Projects view grouped by `Standing` covers the rest.
 
 ### 13.1 Supervision session log
 
 Every supervision invocation writes an append-only **session log**, one record per step,
-as JSONL committed to the control repo at `sessions/<mission>/<session-id>.jsonl` (with a
+as JSONL committed to the control repo at `sessions/<operation>/<session-id>.jsonl` (with a
 compressed copy as an artifact). A session log records, in order:
 
 - **Reasoning traces verbatim** — the model's full thinking/reasoning output, not just
@@ -717,7 +717,7 @@ compressed copy as an artifact). A session log records, in order:
 **Commit it, don't just artifact it.** Actions artifacts expire (~90 days by default);
 committing the JSONL makes the audit trail durable and diffable. Guard repo growth
 with per-session files, gzip, and a rollup policy (DECIDED): full traces are kept for
-90 days (or the last N missions), then rolled up to a summary plus a trace digest.
+90 days (or the last N operations), then rolled up to a summary plus a trace digest.
 
 **Provider constraint.** Some providers redact or encrypt chain-of-thought. The
 supervision model tier therefore has a **reasoning-trace availability requirement**;
@@ -734,7 +734,7 @@ other agents' model context, regardless.
 ## 14. Repo layout (target)
 
 ```
-.github/workflows/{elicit,start-mission,explore,act,reconcile,on-pr-event,control}.yml
+.github/workflows/{elicit,start-operation,explore,act,reconcile,on-pr-event,control}.yml
 src/
   control-plane/
     board.ts          # Projects v2 read/write, claim, transitions
@@ -748,9 +748,9 @@ src/
     actor.ts
     supervisor.ts
     elicitor.ts
-  sessions/           # per-mission supervision session logs (§13.1)
+  sessions/           # per-operation supervision session logs (§13.1)
   schemas/            # zod schemas for specifications and tool I/O
-missions/<id>/{explorer.yaml,actor.yaml}
+operations/<id>/{explorer.yaml,actor.yaml}
 models.yaml           # tier -> provider/model map
 fixtures/             # synthetic data for the worked example (§17)
 README.md             # orientation for contributors
@@ -766,20 +766,20 @@ docs/adr/             # architecture decision records
 Settled across the four interrogation rounds: autonomy (operator approves the
 specification and merges every draft change proposal); target scope (own orgs, same-repo
 branches, no forks); model catalog (Freebuff-only); board (exactly one project per
-mission, which alone manages its standings); already-compliant targets
+operation, which alone manages its standings); already-compliant targets
 (`no change needed`, which counts as done); task divergence (intent fixed, bounded
 adaptation); qualification (deterministic validator only, content criteria included);
 existing change-proposal conflict (`needs operator`); adaptation bounds (new files
-allowed, dependency/lockfile edits forbidden → `needs operator`); mission conclusion
+allowed, dependency/lockfile edits forbidden → `needs operator`); operation conclusion
 (all targets disposed, envelope exhausted, or operator declares done); failure re-entry
 (`failed` terminal, operator `reset` only); transient failures (job-level retry, never an
 `Attempt`); resolving `needs operator` (operator `resume`/`dismiss`); the
-reconnaissance-to-real transition (a forecast, not a reservation — the real mission
+reconnaissance-to-real transition (a forecast, not a reservation — the real operation
 re-discovers); content-probe freshness (re-probe at qualification and triage, cache
 within a run only); the reconnaissance gate (required before `active`); and
-specification revision (a new mission);
-cross-mission collision (`needs operator`); language/runtime (TypeScript/Node
-with `@octokit/*`); supervision location (a scheduled Actions job); first-mission
+specification revision (a new operation);
+cross-operation collision (`needs operator`); language/runtime (TypeScript/Node
+with `@octokit/*`); supervision location (a scheduled Actions job); first-operation
 estimate (accept `heuristic_v1`); control repo visibility (public, with v1
 restricted to public / non-sensitive targets); and session-log retention (full traces
 90 days, then rollup).
@@ -798,13 +798,13 @@ the phased plan in §16.
 ## 16. Phased implementation plan
 
 - **Phase 0 — control plane.** GitHub App + Octokit, Projects v2 read/write, a
-  `hello-world` mission that creates one tracking issue and moves it through its
+  `hello-world` operation that creates one tracking issue and moves it through its
   standings.
 - **Phase 1 — explorer.** Deterministic search + partition, metadata and content
   criteria, create targets, standing `discovered`, plus the read-only reconnaissance
   mode and feasibility report (target count first, then size and cost) built in from
   the start, since it is the safest way to test discovery against real orgs.
-- **Phase 2 — elicitor.** Interrogation loop over a mission issue producing the two
+- **Phase 2 — elicitor.** Interrogation loop over an operation issue producing the two
   YAML files of the specification and an approval change proposal.
 - **Phase 3 — actor.** Claim → existing-proposal check → triage → clone → change →
   verify → change proposal, with `no change needed` and `needs operator` handling
@@ -821,13 +821,13 @@ Each phase should be usable on a small synthetic org before scaling to real ones
 
 ## 17. Worked example
 
-A single small mission, end to end, exercising every settled decision at least once.
+A single small operation, end to end, exercising every settled decision at least once.
 The fixtures under `fixtures/` reproduce this example: the two specification files, a
 synthetic org inventory, and the expected feasibility report, board, and session log.
 
 ### 17.1 The intent
 
-The operator opens a mission issue on the control repo:
+The operator opens an operation issue on the control repo:
 
 > "Modernise our Scala services. Anything still on 2.13.12 should move to 2.13.14.
 > Keep it small — one proposal per repository. Budget: about $50, and I'll review and
@@ -839,8 +839,8 @@ The Elicitor challenges the vague parts — how to *detect* the version, which
 repositories count, what must pass — and drafts the two files of the specification:
 
 ```yaml
-# missions/2026-10-scala-2-upgrade/explorer.yaml
-mission: 2026-10-scala-2-upgrade
+# operations/2026-10-scala-2-upgrade/explorer.yaml
+operation: 2026-10-scala-2-upgrade
 scope:
   owners: [acme]
   exclude_repos: [acme/dotfiles]
@@ -865,7 +865,7 @@ qualification:
 ```
 
 ```yaml
-# missions/2026-10-scala-2-upgrade/actor.yaml
+# operations/2026-10-scala-2-upgrade/actor.yaml
 task:
   title: "Bump Scala to 2.13.14"
   kind: code_change
@@ -876,7 +876,7 @@ acceptance:
   build: "sbt compile"
   test: "sbt test"
 pr:
-  branch: "automation/{{mission}}-{{repo_slug}}"
+  branch: "automation/{{operation}}-{{repo_slug}}"
   draft: true
 adaptation:
   intent: fixed
@@ -894,8 +894,8 @@ escalation:
   on_existing_pr: needs_human
 ```
 
-The operator approves the specification via a change proposal; the mission id and
-specification hash freeze, and mission standing goes `specified`.
+The operator approves the specification via a change proposal; the operation id and
+specification hash freeze, and operation standing goes `specified`.
 
 ### 17.3 Reconnaissance
 
@@ -905,7 +905,7 @@ and extracts the Scala version. It creates nothing. The feasibility report leads
 the target count:
 
 ```yaml
-mission: 2026-10-scala-2-upgrade
+operation: 2026-10-scala-2-upgrade
 specification_hash: 8f3c…
 mode: reconnaissance
 targets: 12                     # headline: 12 repositories would change
@@ -937,11 +937,11 @@ confidence: medium
 ```
 
 The operator is satisfied (12 proposals to review, well under budget) and starts the
-mission; standing goes `active`.
+operation; standing goes `active`.
 
 ### 17.4 The board
 
-`start-mission.yml` creates one Projects v2 project for the mission. Exploration runs
+`start-operation.yml` creates one Projects v2 project for the operation. Exploration runs
 one partition; for each of the 12 matches it creates a tracking issue (the target's
 entry on the board) with the exploration's evidence, and the deterministic validator
 promotes each from `discovered` to `ready`. The board at tick 0:
@@ -991,11 +991,11 @@ merges their proposals, one ends `no change needed`.
 
 ### 17.6 Conclusion
 
-The mission concludes because **every target has a disposition** (7 `accepted`, 2
+The operation concludes because **every target has a disposition** (7 `accepted`, 2
 `no change needed`, 2 `needs operator`, 1 `failed`). The two `needs operator` targets
 await an operator `resume` or `dismiss`; the `failed` target awaits an operator `reset`.
 Final
-rollup on the mission issue:
+rollup on the operation issue:
 
 | Disposition | Count |
 |---|---|
@@ -1007,6 +1007,6 @@ rollup on the mission issue:
 
 Actual model cost was $7.4 against the $6.9 estimate and the $50 envelope — comfortably
 inside, and the observed per-action cost and wall-clock are now the prior for the next
-mission's feasibility report (`estimate_basis: prior_mission`). The two
+operation's feasibility report (`estimate_basis: prior_operation`). The two
 `needs operator` targets and the `failed` one remain on the board for a follow-up
 human decision.

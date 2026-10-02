@@ -13,7 +13,7 @@ jobs, schedules, secrets, App tokens) or an **always-on service** we operate.
 
 ## Decision
 
-Run on **GitHub Actions**. Missions fan out via a matrix; reconciliation runs on a
+Run on **GitHub Actions**. Operations fan out via a matrix; reconciliation runs on a
 schedule tick (~15 minutes); the **supervisor is a scheduled job**, not a service.
 Concurrency groups plus optimistic claiming make over-provisioning safe, so the
 supervisor may dispatch slightly more actions than there are targets to hide startup

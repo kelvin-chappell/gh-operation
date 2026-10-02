@@ -1,5 +1,5 @@
-# Action specification — fixture for DESIGN.md §17.
-mission: 2026-10-scala-2-upgrade
+# Action specification — fixture for the operation in DESIGN.md §17.
+operation: 2026-10-scala-2-upgrade
 task:
   title: "Bump Scala to 2.13.14"
   kind: code_change
@@ -10,7 +10,7 @@ acceptance:
   build: "sbt compile"
   test: "sbt test"
 pr:                                # platform: how the change proposal is opened
-  branch: "automation/{{mission}}-{{repo_slug}}"
+  branch: "automation/{{operation}}-{{repo_slug}}"
   title: "{{task.title}}"
   draft: true
 triage:

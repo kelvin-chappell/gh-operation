@@ -1,9 +1,9 @@
 # Expected final board for the fixture (DESIGN.md §4, §17.6).
 # 12 targets, each with its terminal standing. The rollup at the end must match §17:
 # 7 accepted, 2 no change needed, 2 needs operator, 1 failed.
-mission: 2026-10-scala-2-upgrade
-board: acme/mission-control#7
-fields: [Standing, Target, Mission, Match, ChangeProposal, Attempts, CostUSD, Claim, ClaimedAt]
+operation: 2026-10-scala-2-upgrade
+board: acme/operation-control#7
+fields: [Standing, Target, Operation, Match, ChangeProposal, Attempts, CostUSD, Claim, ClaimedAt]
 
 targets:
   - target: acme/orders-service

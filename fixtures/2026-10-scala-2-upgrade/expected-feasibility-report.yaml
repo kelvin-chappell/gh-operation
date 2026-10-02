@@ -1,6 +1,6 @@
 # Expected reconnaissance output for the fixture (DESIGN.md §9, §17.3).
 # Reduced org: 20 candidates -> 12 targets. The report leads with the target count.
-mission: 2026-10-scala-2-upgrade
+operation: 2026-10-scala-2-upgrade
 specification_hash: 8f3c9a1e00000000000000000000000000000000000000000000000000000000
 mode: reconnaissance
 targets: 12                     # headline: 12 repositories would change
@@ -11,7 +11,7 @@ size:
   matched_by_content: 12        # every match came from the build.sbt probe
   borderline: 0
   estimated_eligible: 12
-  estimate_basis: heuristic_v1   # heuristic_v1 | prior_mission | pilot
+  estimate_basis: heuristic_v1   # heuristic_v1 | prior_operation | pilot
 quota:
   search_calls_used: 3
   search_quota_remaining: 147

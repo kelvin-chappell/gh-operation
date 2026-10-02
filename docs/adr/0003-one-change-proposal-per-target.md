@@ -7,7 +7,7 @@
 
 ## Context
 
-A mission applies the same task across many repositories. Two axes had to be settled:
+An operation applies the same task across many repositories. Two axes had to be settled:
 how the work is packaged, and how much autonomy the system has.
 
 - **Packaging:** one batched change across repositories, or one change per repository?

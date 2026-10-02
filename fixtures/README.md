@@ -1,6 +1,6 @@
 # Fixtures — worked example (`DESIGN.md` §17)
 
-Synthetic data for the mission `2026-10-scala-2-upgrade`. Nothing here touches a real
+Synthetic data for the operation `2026-10-scala-2-upgrade`. Nothing here touches a real
 repository; a test harness replaces the GitHub API and the content probes with the
 inventory in `2026-10-scala-2-upgrade/repositories.yaml`.
 
@@ -15,8 +15,8 @@ only the scan counts differ.
 
 | File | What it is |
 |---|---|
-| `missions/2026-10-scala-2-upgrade/explorer.yaml` | the exploration specification (criteria) |
-| `missions/2026-10-scala-2-upgrade/actor.yaml` | the action specification (task, acceptance, bounds) |
+| `operations/2026-10-scala-2-upgrade/explorer.yaml` | the exploration specification (criteria) |
+| `operations/2026-10-scala-2-upgrade/actor.yaml` | the action specification (task, acceptance, bounds) |
 | `2026-10-scala-2-upgrade/repositories.yaml` | the synthetic org inventory: metadata + `build.sbt` content |
 | `2026-10-scala-2-upgrade/expected-feasibility-report.yaml` | expected reconnaissance output |
 | `2026-10-scala-2-upgrade/expected-board.yaml` | expected final board: 12 targets and their dispositions |

@@ -1,6 +1,6 @@
-# Exploration specification — fixture for DESIGN.md §17.
+# Exploration specification — fixture for the operation in DESIGN.md §17.
 # Same content as the worked example; standalone so a test can load it directly.
-mission: 2026-10-scala-2-upgrade
+operation: 2026-10-scala-2-upgrade
 scope:
   owners: [acme]
   exclude_repos: [acme/dotfiles]

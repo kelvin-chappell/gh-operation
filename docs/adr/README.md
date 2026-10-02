@@ -1,11 +1,11 @@
 # Architecture Decision Records
 
-Load-bearing decisions for Mission Runner. Format: Status / Context / Decision /
+Load-bearing decisions for Operation Runner. Format: Status / Context / Decision /
 Consequences. Vocabulary follows `CONTEXT.md`; the design itself is `DESIGN.md`.
 
 | ADR | Decision |
 |---|---|
-| [0001](0001-board-is-github-projects-v2.md) | The board is a GitHub Projects v2 project, one per mission |
+| [0001](0001-board-is-github-projects-v2.md) | The board is a GitHub Projects v2 project, one per operation |
 | [0002](0002-qualification-is-deterministic.md) | Qualification is deterministic; the model records evidence but never promotes |
 | [0003](0003-one-change-proposal-per-target.md) | One change proposal per target, opened as a draft, merged by the operator |
 | [0004](0004-public-control-repo-public-only-targets.md) | Public control repo, with v1 restricted to public/non-sensitive targets |

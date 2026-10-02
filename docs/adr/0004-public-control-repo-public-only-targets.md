@@ -22,7 +22,7 @@ leak its existence, its contents, and reasoning about it.
 The control repo is **public** in v1 — control plane, board, and session logs alike —
 and v1 **targets only public / non-sensitive repositories**. The constraint is enforced
 **in the specification's scope** (`visibility: public`, a `private: false` criterion),
-so a mission cannot be created against a private repository; the check is a required
+so an operation cannot be created against a private repository; the check is a required
 rubric item at freeze.
 
 ## Consequences
@@ -33,7 +33,7 @@ rubric item at freeze.
 - The privacy rule is enforced by construction, not by convention.
 
 **Negative**
-- v1 cannot be used on private or sensitive repositories at all; such a mission is
+- v1 cannot be used on private or sensitive repositories at all; such an operation is
   refused.
 - If that restriction is ever relaxed, session logs and raw board evidence must move to
   private storage, and the board must stop carrying raw content snippets — a follow-up
