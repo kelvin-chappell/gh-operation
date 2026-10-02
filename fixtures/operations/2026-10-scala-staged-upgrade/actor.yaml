@@ -50,7 +50,7 @@ transitions:
         Do not reformat unrelated code.
     acceptance: { build: "sbt compile", test: "sbt test" }
 pr:
-  branch: "automation/{{operation}}-{{repo_slug}}-{{transition}}"
+  branch: "automation/{{operation}}-{{repo_slug}}-{{transition}}-{{task_generation}}"
   title: "{{task.title}}"
   labels: [automation, "operation/{{operation}}"]
   draft: true

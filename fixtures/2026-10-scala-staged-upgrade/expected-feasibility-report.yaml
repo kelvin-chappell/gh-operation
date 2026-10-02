@@ -1,5 +1,8 @@
 # Read-only forecast before actions or waivers (DESIGN.md §9, §18).
 operation: 2026-10-scala-staged-upgrade
+operation_repository: acme/scala-staged-upgrade-operation
+execution_revision: "2222222222222222222222222222222222222222"
+cost_unit: ai_credits
 mode: reconnaissance
 targets: 4
 starting_stages:
@@ -16,12 +19,12 @@ remaining_transitions:
   total: 6
 cost:
   transition_estimates:
-    to-scala-2-13: { count: 1, model_usd_per_action: 0.50, runner_minutes_per_action: 5 }
-    to-scala-3-3: { count: 2, model_usd_per_action: 1.50, runner_minutes_per_action: 15 }
-    to-scala-3-9: { count: 3, model_usd_per_action: 0.75, runner_minutes_per_action: 8 }
+    to-scala-2-13: { count: 1, ai_credits_per_action: 0.50, runner_minutes_per_action: 5 }
+    to-scala-3-3: { count: 2, ai_credits_per_action: 1.50, runner_minutes_per_action: 15 }
+    to-scala-3-9: { count: 3, ai_credits_per_action: 0.75, runner_minutes_per_action: 8 }
   # Per-action estimates include destination-stage and post-merge verification.
-  exploration_and_entry_verification: { model_usd: 0.10, runner_minutes: 2 }
-  projected_total: { model_usd: 5.85, runner_minutes: 61 }
+  exploration_and_entry_verification: { ai_credits: 0.10, runner_minutes: 2 }
+  projected_total: { ai_credits: 5.85, runner_minutes: 61 }
 review:
   change_proposals_expected: 6
   no_change_expected: 1

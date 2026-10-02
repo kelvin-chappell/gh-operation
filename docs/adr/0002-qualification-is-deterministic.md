@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-01
 - **Deciders:** operator
-- **Related:** `DESIGN.md` §2 (constraint 7), §5.1, §6; `CONTEXT.md` (Qualification, Criteria)
+- **Related:** `DESIGN.md` §2, §5.1, §6; `CONTEXT.md` (Qualification, Criteria); ADR 0008
 
 ## Context
 
@@ -22,12 +22,13 @@ A candidate becomes a **target** only when a **deterministic validator** confirm
 criteria — metadata conditions and content conditions alike (content values extracted
 by declared methods, e.g. regex over `build.sbt`). The explorer's LLM may **annotate** a
 candidate and record structured evidence, but it **never promotes** a candidate.
-Machine-checkable criteria are a required rubric item before the specification freezes.
+Machine-checkable criteria are a required rubric item before an execution revision is approved.
 
 ## Consequences
 
 **Positive**
-- Target sets are reproducible and explainable: rerunning an operation yields the same set.
+- Qualification is reproducible from identical evidence and the same approved revision;
+  fresh discovery may observe changed repositories and must report that drift.
 - Qualification is auditable — the reason a repo is in the operation is a checkable rule.
 - Ambiguity is pushed into the specification, where the operator can see and approve it.
 
@@ -35,4 +36,5 @@ Machine-checkable criteria are a required rubric item before the specification f
 - Fuzzy criteria cannot be expressed as judgement; they must be reduced to metadata or
   a content probe (a file plus an extraction method).
 - Content criteria require fetching and parsing repository files, so exploration needs
-  read access to repository contents (still read-only, so safe in reconnaissance).
+  read access to repository contents (read-only in reconnaissance, still subject to
+  confidentiality gates).

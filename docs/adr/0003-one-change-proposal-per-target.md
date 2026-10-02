@@ -1,6 +1,6 @@
 # 0003 — One change proposal per target, opened as a draft, merged by the operator
 
-- **Status:** Packaging superseded by [0007](0007-stages-and-completion.md); draft and operator-merge gates retained
+- **Status:** Packaging superseded by [0007](0007-stages-and-completion.md) and [0008](0008-one-repository-per-operation.md); draft and human merge gates retained
 - **Date:** 2026-10-01
 - **Deciders:** operator
 - **Related:** `DESIGN.md` §1, §4, §9, §12; `CONTEXT.md` (Change Proposal, Disposition)

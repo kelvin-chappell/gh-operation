@@ -1,4 +1,4 @@
-# Context: Operation Runner
+# Context: Operations
 
 The language for undertakings carried out over a collection of repositories.
 
@@ -7,19 +7,28 @@ The language for undertakings carried out over a collection of repositories.
 ## The unit of work
 
 **Operation** — One bounded undertaking: a single operator intent, clarified into a
-single frozen specification, aimed at a single set of targets, under a single
+versioned operation definition, aimed at a target set, under a single
 resource envelope. The operation is the unit of work and the unit of accounting;
-nothing happens outside an operation, and everything else in this language either
+all operational execution belongs to an operation. Everything else in this language
 describes an operation, is a part of one, or is something done to one.
+Revisions may change its definition while continuing that intent; unrelated intent
+belongs to a new operation.
 
 *Not to be confused with:* the intent that starts it, or with any one exploration or
 action within it.
+
+**Operation Repository** — The repository that defines and carries out exactly one
+operation, and owns its operational record. Each operation has exactly one such
+repository, created after its initial definition has been approved.
 
 **Intent** — The operator's opening statement of what they want, before clarification.
 Deliberately vague and not yet actionable.
 
 **Operator** — The human who owns an operation. Supplies the intent, answers
 interrogation, and holds final authority over the operation.
+
+**Delegate** — A person explicitly authorised by the operator to make specified
+operational decisions. Repository access alone does not confer that authority.
 
 **Operation Standing** — Where an operation as a whole sits: *draft*, *specified*, *scoped*,
 *active*, *concluded*, or *abandoned*.
@@ -35,9 +44,9 @@ or unresolved failures is not completion.
 An operation is carried out through activities. Four are named here; three of them
 (interrogation, exploration, action) do the work, and supervision governs them.
 
-**Interrogation** — Converting an intent into a specification by structured
-questioning of the operator. Ends only when the specification is complete enough to
-freeze. *Also called:* grilling.
+**Interrogation** — Converting an intent into a complete operation definition by
+structured questioning of the operator. Ends when the definition is ready for
+approval. *Also called:* grilling.
 
 **Exploration** — Finding repositories that belong to an operation, and qualifying them.
 
@@ -45,8 +54,7 @@ freeze. *Also called:* grilling.
 transition or an unstaged operation's task. It produces at most one change proposal;
 a target may need several actions and proposals. A **substantive failure** is the work
 failing; a **transient failure** is the machinery failing — a rate limit, a lost runner,
-a network fault — and is retried
-without counting as an attempt.
+a network fault — and is retried without counting as an attempt.
 
 **Supervision** — Governing an operation: deciding how much interrogation, exploration,
 and action to run, when to pause, and when the operation is concluded, within the
@@ -77,10 +85,27 @@ action.
 
 ## The specification
 
-**Specification** — The frozen, checkable definition of an operation: what to find, what
-to do, and how to tell whether it was done. Frozen before any action; changes require
-a new operation. It contains criteria and either one task with acceptance, or an
+**Specification** — The versioned, checkable definition of an operation: what to find,
+what to do, and how to tell whether it was done. It can be revised within the same
+operation. It contains criteria and either one task with acceptance, or an
 ordered set of stages and transitions with their tasks and acceptance.
+
+**Specification Revision** — One identifiable version of an operation's specification.
+A revision changes the definition without, by itself, creating a different operation.
+
+**Operation Definition** — The complete description of what an operation is to do
+and how it is to be carried out, including its specification and prescribed behaviour.
+
+**Execution Revision** — An identifiable, approved version of an operation definition
+that governs work. Changing the specification or the prescribed behaviour requires
+a newly approved execution revision, not necessarily a new operation.
+
+**Operation Manifest** — The record of how an operation definition's parts fit
+together, making its structure inspectable and reusable.
+
+**Task Generation** — One approved definition of a transition's work or an unstaged
+task. Materially changing its task, destination checks, acceptance or bounds creates
+a new generation; an unrelated runtime repair does not.
 
 **Criteria** — The conditions a repository must meet to belong to the operation.
 Criteria range from *metadata* (language, topic, activity) to *content* conditions that
@@ -123,8 +148,10 @@ content condition requires it.
 *failed*, *waived*, or *excluded*. Standing describes the work's lifecycle, independently
 of the target's current stage.
 
-**Claim** — The exclusive right, held by one actor, to act on a target. A claim carries
-a **lease**; an expired lease frees the target to be claimed again.
+**Claim** — The exclusive right, held by one operation and exercised by at most one
+actor at a time, to perform one transition or unstaged task on a target. It covers
+proposal review and verification and is released between transitions. A claim carries
+a **lease**; an expired lease requires operator-confirmed recovery before takeover.
 
 **Attempt** — One try by an actor at performing the applicable task on a target.
 Retries of a transition are attempts, not additional stages.
@@ -140,8 +167,18 @@ does not count as completion.
 
 ## The operator's decisions
 
-**Operator decision** — An explicit intervention by the operator on a single target,
-outside the automatic loop. The system never makes one on its own.
+**Operator decision** — An explicit intervention by the operator on an operation or
+one of its targets, outside the automatic loop. The system never makes one on its own.
+
+**Activation** — The operator's explicit authorisation to start an approved execution
+revision once the operation is ready. Creation of its repository is not activation.
+
+**Reactivation** — Explicitly starting a previously concluded operation again under
+a newly approved execution revision that continues the same intent.
+
+**Revision Handover** — Replacing the active execution revision after active actions
+have finished and outstanding proposals have been resolved. Two execution revisions
+do not dispatch work concurrently within one operation.
 
 **Reset** — Returns a *failed* target to *ready* with a fresh attempt budget.
 Earlier achieved stages are retained.
@@ -152,7 +189,11 @@ unfinished work on a qualified target; that requires a waiver.
 
 **Waiver** — An operator's explicit, reasoned decision to leave a qualified target
 short of the goal. It gives the target the standing *waived* and counts towards
-completion without claiming that the final stage was reached.
+completion without claiming that the final stage was reached. It carries forward
+only while the relevant obligations remain unchanged; changed work requires reaffirmation.
+
+**Emergency Stop** — Immediately halting dispatch, active work and publication.
+It does not free claims or resolve proposals without safe recovery.
 
 ---
 
@@ -161,23 +202,34 @@ completion without claiming that the final stage was reached.
 **Board** — The record of an operation's targets, their stages and their standings.
 One board per operation.
 
-**Envelope** — The operation's declared limits: cost, concurrency, and wall-clock.
+**Envelope** — The operation's declared limits: cost in AI credits, concurrency and
+wall-clock. Its credit threshold stops new dispatch; in-flight overshoot is recorded.
+Cost is not measured or forecast in currency.
 
 **Quota** — Limits imposed from outside the operation on how fast it may operate.
 
 **Feasibility Report** — The projection reconnaissance produces: the expected size,
 cost, and duration of an operation.
 
-**Session Log** — The record of a supervision session, including its reasoning.
+**Session Log** — The structured record of a supervision session, including its
+inputs, decisions, explicit rationale and usage. Available permitted traces may
+supplement it; undisclosed internal reasoning is not required.
 
 ---
 
 ## Relationships
 
-- An operation has one operator, one specification, one board, and one envelope.
+- An operation has one operator, one versioned definition, one board, one envelope
+  and exactly one operation repository.
+- An operation repository defines and carries out exactly one operation, retaining
+  its operational record across specification revisions.
+- An operation definition includes the specification and prescribed behaviour; an
+  approved execution revision governs each action.
+- Creating an operation repository does not activate it. Conclusion or abandonment
+  stops new work while preserving the operation's record.
 - A specification contains criteria and either one task with acceptance, or stages
   linked by transitions with their own tasks and acceptance.
-- Interrogation turns an intent into a specification.
+- Interrogation turns an intent into an operation definition.
 - Exploration produces candidates; qualification promotes them to targets.
 - Action performs the applicable task on a target and may produce a change proposal.
 - A target can enter at any verified stage; each transition advances it towards the

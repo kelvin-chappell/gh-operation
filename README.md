@@ -1,110 +1,84 @@
-# Operation Runner
+# gh-operation
 
-A system of **elicitor**, **supervisor**, **explorer**, and **actor** agents that carry
-one kind of work across many repositories. An operator states an intent; the system
-clarifies it by structured interrogation, discovers the repositories that belong to the
-operation, and advances each towards its goal. An operation may have ordered stages,
-with a separate task and change proposal for each transition.
+This repository will **create repositories that define concrete operations**. Each
+operation has exactly one independently runnable **Operation Repository**, containing
+its manifest, specification, agents, skills, workflows and local controller source.
+Those repositories run and manage their operations, not this creator repository.
 
-**Status: design complete, ready for implementation.** There is no code yet; this repo
-is the design, its glossary, its decisions, and the fixtures for its first test.
-
----
+**Status: operation-repository contract agreed; creator design is next.** There is no
+runtime or generator implementation yet. The documentation records the confirmed
+boundary and the validation gates required before an operation may execute.
 
 ## Start here
 
-| Document | What it is |
+| Document | Purpose |
 |---|---|
-| [`DESIGN.md`](DESIGN.md) | The full design: components, lifecycle, data model, security, orchestration |
-| [`CONTEXT.md`](CONTEXT.md) | The **domain glossary** — read this first; the design is written in its language |
-| [`docs/adr/`](docs/adr/README.md) | The load-bearing decisions and why they were made |
-| [`fixtures/`](fixtures/README.md) | Unstaged and staged operations, as test data |
+| [`CONTEXT.md`](CONTEXT.md) | Canonical domain glossary |
+| [`DESIGN.md`](DESIGN.md) | Operation-repository contract; §20 defers the detailed creator design |
+| [`docs/adr/`](docs/adr/README.md) | Decisions and superseded alternatives |
+| [`fixtures/`](fixtures/README.md) | Synthetic unstaged/staged specifications and expected outcomes |
 
----
+## Definition, creation and execution
 
-## The language
+Interrogation first turns an intent into a complete executable definition. The
+operator approves it **before** the operation repository is created. Preserve that
+approval and provenance, then require a separate activation after readiness and
+reconnaissance. Creation does not automatically start target changes.
 
-The design uses a small, deliberate vocabulary; `CONTEXT.md` is the authority. The
-short version:
+An operation repository runs pinned **Copilot CLI in GitHub Actions**, using local
+agent/skill definitions and controller source. Its versioned manifest and overview
+make the structure inspectable. Approved definitions live on a protected branch;
+append-only operational records live on a separate branch in the same repository.
+It owns its tracking issues and associated Projects v2 board.
 
-- An **operation** is one bounded undertaking: one intent, one frozen **specification**,
-  one **board**, one **envelope**. It is the unit of work and of accounting.
-- Four agent roles carry it out. **Agent** is the umbrella; the roles are
-  **Elicitor** (interrogates the operator into a specification), **Supervisor**
-  (allocates — how much exploration and action, when to pause, when the operation is
-  done), **Explorer** (finds repositories), and **Actor** (does the work).
-- **Exploration** finds **candidates**; **qualification** promotes them to **targets**.
-  A **stage** is a verified milestone, such as Scala 2.13. A **transition** prescribes
-  the task and acceptance for moving to the next stage. **Action** performs that task
-  on one target and may produce a **change proposal**.
-- **Stage** describes achieved progress; **standing** describes the work's lifecycle.
-  Staged boards group by operation-defined stage names, without losing lifecycle
-  standings. Unstaged operations retain their single task.
-- **Reconnaissance** is exploration with no action — the read-only sweep that produces
-  a **feasibility report** before anything is spent.
+Only approved operation configuration governs execution. Target files remain
+untrusted data. Qualification, claims, credit accounting, publication and completion
+are enforced by trusted code, not granted because a model asserted success.
 
----
+## Stages, actions and completion
 
-## How an operation runs
+**Stage** records achieved progress; **standing** records whether work is ready,
+underway, awaiting review, blocked or finished. Stage-based board columns can be
+operation-specific without losing the lifecycle view.
 
-```
-intent ─▶ interrogation ─▶ specification ─▶ reconnaissance ─▶ exploration
-                                                                    │
-                            change proposal ◀─ action ◀─ target ◀──┘
-                                    │
-                       operator merges ─▶ verify stage ─▶ next action
-                                               │
-                                          final goal ─▶ accepted
-```
+For example, a Scala 2.12 target follows **2.12 -> 2.13 -> 3.3 -> 3.9**, with three
+separate proposals. A target already at 3.3 needs only the final transition. Each
+task generation has one proposal, and only one proposal may be open per target.
+Hold an atomic target-local claim through review and default-branch verification,
+then release between verified transitions. Expiry never authorises automatic takeover.
 
-1. **Interrogation** turns a vague intent into a frozen specification; the operator
-   approves it.
-2. **Reconnaissance** measures the size and cost, read-only. The feasibility report
-   leads with the target count.
-3. **Exploration** discovers repositories and qualifies them onto the operation's board.
-4. **Action** claims a target, verifies its stage, selects the frozen transition task,
-   and opens one draft proposal. Each transition has its own proposal; only one may
-   be open per repository at a time.
-5. The **operator** merges every proposal. Verification on the default branch advances
-   the target to the next stage, then the next action, until the final goal is reached.
-6. The operation is **complete** only after discovery has finished and every qualified
-   target has reached the final goal or been explicitly **waived** by the operator.
-   `failed` and `needs operator` do not count as completion.
+After discovery and qualification finish, completion requires every obligation to
+reach the current final goal or be explicitly **waived**. A waived repository remains
+visible at its last verified stage with the operator's reason. Failure, a blocker,
+an intermediate merge or exhausted resources is not completion.
 
-Each target's **standing** (`ready`, `in action`, `proposal open`, `accepted`,
-`no change needed`, `needs operator`, `failed`, `waived`, `excluded`, …) is tracked
-separately from its stage.
+## Revisions, privacy and cost
 
-For example, a Scala 2.12 target follows **2.12 → 2.13 → 3.3 → 3.9**, with three
-separate proposals. A target already on 3.3 needs only the final transition. A waived
-target remains visible at its last achieved stage, with the operator's reason.
+Same-intent revisions remain in the same operation repository. Drain actions and
+resolve proposals before handover. Preserve history, cumulative spending and
+unchanged-task retry counts; re-verify progress. Material work changes create new
+approved task generations, and changed obligations require waiver reaffirmation.
+Reopening a concluded operation requires explicit reactivation, not merely a push.
 
----
+Private targets require a private operation repository, equally restricted records
+and verified Copilot/model data-handling guarantees. Reuse copies approved structure
+and provenance, never live state. Private-to-public reuse needs an explicitly reviewed
+sanitised export and fresh approval.
 
-## Decisions
+**Cost is measured only in AI credits.** There are no currency forecasts. The measured
+credit threshold stops new dispatch with conservative reservations; in-flight
+overshoot is disclosed. Runner time and concurrency are separate resource limits.
+Missing authoritative credit metering blocks execution.
 
-The hard-to-reverse choices are recorded as ADRs. In brief:
+Keep minimised durable audit with explicit rationale. Sensitive raw payloads and
+optional available traces have restricted storage and explicit retention; they are
+not committed permanently to Git. Stop work on conclusion or abandonment; archive
+after outstanding work is resolved. Emergency stop cancels active work without
+automatically freeing claims.
 
-- **One board per operation**, a GitHub Projects v2 project; targets are tracking issues
-  ([0001](docs/adr/0001-board-is-github-projects-v2.md)).
-- **Qualification is deterministic**; the model records evidence but never promotes
-  ([0002](docs/adr/0002-qualification-is-deterministic.md)).
-- **One change proposal per target and transition**, draft, merged only by the
-  operator; stages are separate from standings and completion requires the final
-  goal or a waiver ([0007](docs/adr/0007-stages-and-completion.md), superseding the
-  packaging rule in [0003](docs/adr/0003-one-change-proposal-per-target.md)).
-- **The control repo is public**, so v1 targets only public/non-sensitive repositories
-  ([0004](docs/adr/0004-public-control-repo-public-only-targets.md)).
-- **A custom agent harness**, not a framework
-  ([0005](docs/adr/0005-custom-agent-harness.md)).
-- **GitHub Actions** is the runtime
-  ([0006](docs/adr/0006-github-actions-runtime.md)).
+## Next discussion
 
----
-
-## What's next
-
-`DESIGN.md` §16 lays out the phased plan. **Phase 0** is the control plane: GitHub App
-auth, Projects v2 read/write, and a `hello-world` operation that moves one target through
-its standings. Each phase should run against a small synthetic org first — the fixtures
-in `fixtures/` are the starting point.
+`DESIGN.md` §20 identifies the next topic: this repository's inputs, interaction
+model, definition assembly/approval, reuse, validation, creation and provisioning
+assistance. Its detailed architecture remains deliberately undecided. It will not
+be a central live runner or a second source of truth for its generated operations.

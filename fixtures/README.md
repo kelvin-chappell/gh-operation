@@ -4,12 +4,20 @@ Synthetic data for the operation `2026-10-scala-2-upgrade`. Nothing here touches
 repository; a test harness replaces the GitHub API and the content probes with the
 inventory in `2026-10-scala-2-upgrade/repositories.yaml`.
 
+These are partial definition and outcome fixtures, not complete runnable operation
+repositories. `operations/<id>/` groups test examples here; an actual operation
+repository has one root manifest and `specification/`, not a multi-operation directory.
+Execution hashes, generation/claim ids, model names and credit values are synthetic.
+Cost is **AI credits only**; the values are not converted historical currency amounts.
+Each board declares its one-revision identity, shared by its entries.
+
 ## Why a *reduced* org
 
 `DESIGN.md` §17 illustrates a realistic scan (140 candidates → 12 targets). This fixture
 uses a **20-repository synthetic org** so it stays readable and runs instantly. It
 reproduces the same **12 targets and standings** as §17;
-only the scan counts differ.
+Scan counts and exploration forecasts differ. Total projected credits and runner
+minutes include exploration as well as action work.
 
 ## Files
 
@@ -37,7 +45,8 @@ only the scan counts differ.
    `search` reaches `failed` after escalation; `billing`/`scheduler` land on
    `no change needed` because of drift, not because the criteria changed.
 5. **Logging.** A supervision invocation produces records shaped like
-   `expected-session-log.jsonl`, including a verbatim `reasoning_trace`.
+   `expected-session-log.jsonl`, including explicit `rationale`, execution identity,
+   target-local claim acquisition, reservations and trusted AI-credit usage.
 
 ## Staged Scala upgrade
 
@@ -55,8 +64,8 @@ are illustrative test data, not assertions about available Scala releases.
 A harness should detect exactly one stage from all probed versions, choose only
 the next transition, retain the achieved stage while a proposal is open, and advance
 only on verified default-branch progress. Check that each transition has a distinct
-branch/proposal identity, retries reuse it, attempts reset only for a new transition
-or operator reset, and costs and history never reset.
+branch/proposal identity including its task generation, retries reuse it, and
+unchanged-task retries, measured credits and history survive execution revisions.
 
 The scenario cases cover starting midway or already final, externally completed
 steps, unrecognised and mixed versions, intermediate merges, duplicate/late events,
@@ -64,3 +73,10 @@ closed-unmerged proposals, verification failure, waiver authority, claim/proposa
 guards and completion with unresolved or undiscovered work. A waiver counts towards
 completion but never changes the achieved stage. Failed work and exhausted resources
 must not become success-shaped outcomes.
+
+## Operation repository lifecycle
+
+`operation-repository/scenarios.json` records contract cases for creation versus
+activation, readiness/privacy gates, revision handover, task generations, waiver
+reaffirmation, credit thresholds and safe claim release. They specify future runtime
+expectations; they do not prove Copilot isolation/metering or live GitHub atomicity.

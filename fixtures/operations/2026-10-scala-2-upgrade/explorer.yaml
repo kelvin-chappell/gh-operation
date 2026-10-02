@@ -4,7 +4,7 @@ operation: 2026-10-scala-2-upgrade
 scope:
   owners: [acme]
   exclude_repos: [acme/dotfiles]
-  visibility: public               # v1: private repos are refused (public control repo)
+  visibility: public               # this fixture is public-only; private operations are supported
 criteria:                          # all must hold; metadata AND content allowed
   metadata:
     private: false

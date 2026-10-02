@@ -10,7 +10,7 @@ acceptance:
   build: "sbt compile"
   test: "sbt test"
 pr:                                # platform: how the change proposal is opened
-  branch: "automation/{{operation}}-{{repo_slug}}"
+  branch: "automation/{{operation}}-{{repo_slug}}-{{task_generation}}"
   title: "{{task.title}}"
   draft: true
 triage:

@@ -1,6 +1,6 @@
 # 0005 — A custom agent harness, not an agent framework
 
-- **Status:** Accepted
+- **Status:** Superseded by [0008](0008-one-repository-per-operation.md)
 - **Date:** 2026-10-01
 - **Deciders:** operator
 - **Related:** `DESIGN.md` §1, §8, §12, §13.1, §14
@@ -21,6 +21,10 @@ But three requirements are load-bearing and unusual:
    validated before applying.
 
 ## Decision
+
+The following records the original runtime choice. The current choice is pinned
+Copilot CLI in GitHub Actions with local controller code, a structured audit and
+only available permitted traces, as recorded in ADR 0008.
 
 Build a **minimal custom loop** over an LLM API with hand-written GitHub tools. No agent
 framework.

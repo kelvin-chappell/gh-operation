@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-01
 - **Deciders:** operator
-- **Related:** `DESIGN.md` §1, §2 (constraint 5), §11, §12
+- **Related:** `DESIGN.md` §1, §2, §11, §12; ADR 0008
 
 ## Context
 
@@ -13,16 +13,18 @@ jobs, schedules, secrets, App tokens) or an **always-on service** we operate.
 
 ## Decision
 
-Run on **GitHub Actions**. Operations fan out via a matrix; reconciliation runs on a
+Run on **GitHub Actions in each operation repository**, invoking pinned Copilot CLI.
+Operations fan out via a matrix; reconciliation runs on a
 schedule tick (~15 minutes); the **supervisor is a scheduled job**, not a service.
-Concurrency groups plus optimistic claiming make over-provisioning safe, so the
-supervisor may dispatch slightly more actions than there are targets to hide startup
-latency.
+Local concurrency groups supplement, but never replace, atomic target-local claims
+shared across operations. Approved definition commits govern execution; the creator
+repository is not a live scheduler or shared runtime.
 
 ## Consequences
 
 **Positive**
-- Nothing to operate: no servers, no scheduler, no token store of our own.
+- No always-on scheduler service to operate; target-local coordination, external
+  access bindings and authoritative credit reporting still require validation.
 - Naturally resumable and stateless per tick, which suits a planning function that
   re-reads the board each time.
 - Secrets and per-job installation tokens are handled by the platform.

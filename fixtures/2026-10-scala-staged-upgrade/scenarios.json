@@ -164,7 +164,7 @@
     {"name": "needs operator remains unresolved", "discovery_complete": true, "standings": ["accepted", "needs operator"], "expected_complete": false},
     {"name": "intermediate ready target is not done", "discovery_complete": true, "standings": ["ready", "no change needed"], "expected_complete": false},
     {"name": "qualified work cannot be dismissed to create completion", "discovery_complete": true, "standings": ["accepted", "excluded"], "expected_complete": false},
-    {"name": "budget exhaustion cannot complete pending work", "discovery_complete": true, "budget_remaining_usd": 0, "standings": ["accepted", "ready"], "expected_complete": false},
+    {"name": "budget exhaustion cannot complete pending work", "discovery_complete": true, "budget_remaining_ai_credits": 0, "standings": ["accepted", "ready"], "expected_complete": false},
     {"name": "cannot complete while discovery may find more targets", "discovery_complete": false, "standings": ["accepted", "waived"], "expected_complete": false}
   ]
 }

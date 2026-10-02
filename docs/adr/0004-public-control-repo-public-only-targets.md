@@ -1,6 +1,6 @@
 # 0004 — Public control repo, with v1 restricted to public/non-sensitive targets
 
-- **Status:** Accepted
+- **Status:** Superseded by [0008](0008-one-repository-per-operation.md)
 - **Date:** 2026-10-01
 - **Deciders:** operator
 - **Related:** `DESIGN.md` §1, §5.1, §12, §13.1
@@ -18,6 +18,10 @@ repository content. If a target repository were private, a public control repo w
 leak its existence, its contents, and reasoning about it.
 
 ## Decision
+
+The following records the original restriction. Operation visibility is now chosen
+per operation; private targets require private records and verified model
+data-handling guarantees, as recorded in ADR 0008.
 
 The control repo is **public** in v1 — control plane, board, and session logs alike —
 and v1 **targets only public / non-sensitive repositories**. The constraint is enforced

@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-02
 - **Deciders:** operator
-- **Related:** `DESIGN.md` §4, §5.3, §7, §9, §18; `CONTEXT.md` (Stage, Transition, Completion, Waiver)
+- **Related:** `DESIGN.md` §4, §5.3, §7, §9, §18; `CONTEXT.md` (Stage, Transition, Completion, Waiver); ADR 0008
 - **Supersedes:** ADR 0003's one-proposal-per-target packaging rule only
 
 ## Context and decision
@@ -14,16 +14,20 @@ board and envelope; treating milestone names as lifecycle standings hides whethe
 work is ready, underway or blocked.
 
 Use optional ordered **stages** as verifiable repository milestones, separate from
-**standing**. Each adjacent **transition** has a frozen task, acceptance and bounds.
+**standing**. Each adjacent **transition** has an approved task, acceptance and bounds
+within the active execution revision.
 Targets enter at their verified current stage, advance only after verification on
 the default branch, and have at most one proposal per transition, with no stacked
-proposals. The draft and operator-only merge gates remain unchanged.
+proposals. Task generations distinguish material work changes across revisions
+(ADR 0008). The draft and human merge gates remain unchanged.
 
 Completion requires finished discovery and every qualified target at the final goal
 or explicitly **waived** by the operator with a reason. Failure, a blocker or exhausted
 resources is not success. Waivers retain the last achieved stage; conclusion records
 whether the operation actually completed. Unstaged operations retain one task and
-one proposal per target, subject to the same explicit completion rule.
+one proposal per target and task generation, subject to the same explicit completion
+rule. Same-intent revisions retain the repository and history; changed obligations
+require fresh verification and waiver reaffirmation (ADR 0008).
 
 ## Consequences
 
