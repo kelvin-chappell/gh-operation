@@ -80,3 +80,17 @@ must not become success-shaped outcomes.
 activation, readiness/privacy gates, revision handover, task generations, waiver
 reaffirmation, credit thresholds and safe claim release. They specify future runtime
 expectations; they do not prove Copilot isolation/metering or live GitHub atomicity.
+
+## Creator preparation
+
+`creator/scenarios.json` records exact approval binding, labelled preparation
+estimates, actual-usage corrections, resource ownership on retries and inactive
+handover. These are declarative contract cases, not materialiser API arguments:
+approval/ownership flags represent facts verified by trusted components, not
+booleans accepted from a model.
+
+Preparation may continue on meaningful labelled estimates. The operation lifecycle
+fixture still rejects missing authoritative operational usage; the two accounting
+policies must not be conflated. A created repository with explicit external setup
+blockers can be handed over inactive, but missing required creation resources or
+untransferred approval/provenance is not a completed handover.

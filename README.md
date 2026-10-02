@@ -5,7 +5,7 @@ operation has exactly one independently runnable **Operation Repository**, conta
 its manifest, specification, agents, skills, workflows and local controller source.
 Those repositories run and manage their operations, not this creator repository.
 
-**Status: operation-repository contract agreed; creator design is next.** There is no
+**Status: operation-repository and creator architectures agreed.** There is no
 runtime or generator implementation yet. The documentation records the confirmed
 boundary and the validation gates required before an operation may execute.
 
@@ -14,11 +14,42 @@ boundary and the validation gates required before an operation may execute.
 | Document | Purpose |
 |---|---|
 | [`CONTEXT.md`](CONTEXT.md) | Canonical domain glossary |
-| [`DESIGN.md`](DESIGN.md) | Operation-repository contract; §20 defers the detailed creator design |
+| [`DESIGN.md`](DESIGN.md) | Operation-repository contract; §20 defines the creator architecture and build sequence |
 | [`docs/adr/`](docs/adr/README.md) | Decisions and superseded alternatives |
-| [`fixtures/`](fixtures/README.md) | Synthetic unstaged/staged specifications and expected outcomes |
+| [`fixtures/`](fixtures/README.md) | Synthetic preparation and operation contract cases |
 
-## Definition, creation and execution
+## What this repository will do
+
+Provide a **Creator agent**, preparation skills, a tested runtime base, curated
+starting points and deterministic validation/materialisation tools:
+
+```text
+intent -> interrogate/inspect -> assemble -> validate -> human approval
+       -> create and verify repository resources -> inactive handover
+```
+
+Copilot generates operation-specific specifications, agent/skill content and bounded
+adapters. It does not rewrite safety machinery per operation. Drafts, review artifacts,
+credit accounting and creation journals live in resumable private workspaces outside
+this public checkout. Explicit predecessor revisions are inspected as quarantined
+data and adapted onto a supported base, not automatically loaded into the Creator.
+
+Copilot may invoke materialisation after conversational approval, but a trusted human
+receipt must bind the exact bundle and destination. Deterministic tools verify that
+receipt, create the repository/branches/protections/board and recover only verified
+owned partial resources. They never silently overwrite, rename or delete resources.
+
+Preparation has a separate AI-credit threshold. Label estimates distinctly, combine
+them with measured usage/reservations for continuation decisions, and replace them
+when actual usage arrives without double counting. Estimated preparation accounting
+does not relax the operation's authoritative-meter requirement.
+
+Handover transfers the approved definition, approval/provenance, usage and setup
+report into operation-owned records. External access setup remains explicit operator
+work. The operation is **inactive**, never automatically started by creation.
+V1 is initial preparation/creation only, not a fleet manager or central updater.
+
+## What the generated repositories do
 
 Interrogation first turns an intent into a complete executable definition. The
 operator approves it **before** the operation repository is created. Preserve that
@@ -76,9 +107,9 @@ not committed permanently to Git. Stop work on conclusion or abandonment; archiv
 after outstanding work is resolved. Emergency stop cancels active work without
 automatically freeing claims.
 
-## Next discussion
+## Build sequence
 
-`DESIGN.md` §20 identifies the next topic: this repository's inputs, interaction
-model, definition assembly/approval, reuse, validation, creation and provisioning
-assistance. Its detailed architecture remains deliberately undecided. It will not
-be a central live runner or a second source of truth for its generated operations.
+`DESIGN.md` §20.9 starts with proving authentic approval, isolation and accounting
+boundaries; establishing the tested operation runtime base; building pure preparation
+tools; adding the Creator experience; and testing materialisation/recovery and handover.
+The agent, skills, runtime and helpers are planned components, not implemented commands.

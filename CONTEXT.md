@@ -21,6 +21,30 @@ action within it.
 operation, and owns its operational record. Each operation has exactly one such
 repository, created after its initial definition has been approved.
 
+**Preparation** — Turning an intent into an approved operation definition and
+creating its operation repository. Its AI-credit limit and usage are accounted for
+separately from operational execution.
+
+**Creator** — The agent that governs preparation, bringing interrogation, assembly,
+validation and repository creation together. It does not supervise the resulting
+operation.
+
+**Definition Bundle** — The complete, inspectable operation definition assembled
+before its operation repository exists. Approval covers that bundle, not merely its
+summary.
+
+**Creation Plan** — The declared destination and resources to materialise for an
+operation. Approval binds this plan as well as the definition bundle.
+
+**Approval Receipt** — The record of an actual authorised person's approval of a
+specific bundle and creation plan. A creator's assertion of consent is not a receipt.
+
+**Materialisation** — Creating the approved operation repository and its associated
+resources from a definition bundle. It does not activate the operation.
+
+**Handover** — Transferring the created repository, records and setup report to the
+operator. Outstanding external setup is stated explicitly, not mistaken for readiness.
+
 **Intent** — The operator's opening statement of what they want, before clarification.
 Deliberately vague and not yet actionable.
 
@@ -68,9 +92,9 @@ cost of an operation before committing to it. *Also called:* a dry run. Produces
 
 ## The roles
 
-**Agent** — The umbrella for every role in an operation. A supervisor, an elicitor, an
-explorer, and an actor are each agents. "Agent" names the category and is never one
-of its own members.
+**Agent** — The umbrella for automated roles in preparation and execution. Creator,
+supervisor, elicitor, explorer and actor are each agents. "Agent" names the category
+and is never one of its own members.
 
 **Supervisor** — The agent that performs supervision. One per operation.
 **Elicitor** — The agent that performs interrogation with the operator.
@@ -221,6 +245,8 @@ supplement it; undisclosed internal reasoning is not required.
 
 - An operation has one operator, one versioned definition, one board, one envelope
   and exactly one operation repository.
+- Preparation assembles a definition bundle and creation plan, obtains approval
+  and materialises the repository. Handover does not activate it.
 - An operation repository defines and carries out exactly one operation, retaining
   its operational record across specification revisions.
 - An operation definition includes the specification and prescribed behaviour; an

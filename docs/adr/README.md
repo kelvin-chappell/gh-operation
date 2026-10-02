@@ -1,7 +1,7 @@
 # Architecture Decision Records
 
-The current repository boundary is recorded in ADR 0008. Earlier records retain
-their history and explicitly identify superseded choices.
+The operation repository boundary is recorded in ADR 0008 and the creator architecture
+in ADR 0009. Earlier records retain their history and identify superseded choices.
 
 | ADR | Decision |
 |---|---|
@@ -13,3 +13,4 @@ their history and explicitly identify superseded choices.
 | [0006](0006-github-actions-runtime.md) | Each operation runs GitHub Actions with pinned Copilot CLI |
 | [0007](0007-stages-and-completion.md) | Stage/standing separation, transitions and explicit final-goal/waiver completion |
 | [0008](0008-one-repository-per-operation.md) | Independent operation repositories, approved revisions, private-data controls, atomic claims and AI-credit accounting |
+| [0009](0009-copilot-driven-operation-creator.md) | Copilot-driven preparation, tested base, authentic approval, journalled creation and inactive handover |

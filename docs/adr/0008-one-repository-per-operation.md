@@ -49,5 +49,5 @@ avoid a central live coordinator, but need proven race-safe acquisition and rele
 
 The operator confirmed the five-round interview. Copilot isolation/credit metering,
 claim atomicity and confidentiality are implementation-validation gates, not capabilities
-declared to exist. This repository's detailed creator architecture remains the next
-discussion; this ADR does not implement a generator or approve a central live runner.
+declared to exist. The creator architecture is recorded separately in ADR 0009;
+this ADR does not implement a generator or approve a central live runner.

@@ -5,11 +5,11 @@ operation has exactly one Operation Repository, and each Operation Repository
 defines exactly one operation.** Those repositories, not this creator repository,
 run and manage their operations.
 
-**Status: operation-repository contract agreed; creator design deferred.** There is
+**Status: operation-repository and creator contracts agreed.** There is
 no runtime implementation yet. Copilot isolation and metering, target-local claim
 atomicity and private-data guarantees are validation gates, not claimed capabilities.
-The detailed responsibilities and implementation of this creator are the next
-design discussion (§20).
+The creator's architecture and implementation sequence are defined in §20.
+These are design contracts, not claims that agents or helpers have been implemented.
 
 `CONTEXT.md` defines the domain language. ADRs record the decisions and the earlier
 choices they supersede. Platform artifacts retain their platform names: a target's
@@ -556,8 +556,8 @@ explicit diagnostics and block execution, never success-shaped defaults.
 
 Provisioning changes may supply resource ids and access only within approved
 capabilities. Credentials are external bindings, never manifest contents or reusable
-definition data. Their automation/provisioning interface is part of the next creator
-discussion; it is not assumed here.
+definition data. The creator creates repository resources and reports required external
+setup; access grants and installations remain operator-managed (§20).
 
 Actions concurrency groups prevent duplicate local dispatch, while the target claim
 prevents cross-operation overlap. Authenticate command and webhook provenance.
@@ -576,7 +576,7 @@ or target-derived content is recorded. Source visibility is not a substitute for
 checking actual resource permissions.
 These protections apply before creation too: private drafts and approval artifacts
 must not be stored in this public creator repository. The private preparation
-interface belongs to the next creator discussion.
+workspace and handover contract are defined in §20.
 
 Private content may reach only explicitly approved Copilot models/providers with
 verified training-use, retention and access guarantees under the operation's policy.
@@ -683,8 +683,8 @@ not user decisions silently assumed or reasons to invent fallback success.
 
 ## 16. Runtime implementation sequence
 
-This is the dependency order for **operation-owned runtime capabilities**, not yet
-the creator repository's implementation plan.
+This is the dependency order for **operation-owned runtime capabilities**, maintained
+as a tested base here and copied into operations. The creator's own workstream is §20.
 
 1. Manifest/definition validation, approval/activation records, protected source and
    records separation, pinned tools and explicit readiness diagnostics.
@@ -698,8 +698,8 @@ the creator repository's implementation plan.
    comparable-credit estimation.
 
 Exercise synthetic fixtures first. Do not enable target execution while required
-proofs or bindings are missing. This repository's generation UX, APIs, templates,
-catalogue and provisioning automation remain to be designed separately (§20).
+proofs or bindings are missing. The creator's generation, validation and materialisation
+helpers are distinct from this operational runtime (§20).
 
 ## 17. Worked unstaged example
 
@@ -804,19 +804,238 @@ custom-model-loop and currency-based assumptions are superseded. Stage/standing
 separation, deterministic qualification, operator merges and explicit completion
 remain, now qualified by active execution revision and task generation.
 
-## 20. Next: this creator repository
+## 20. Creator design: preparation to handover
 
-The agreed responsibility is **creating independently runnable repositories for
-concrete operations**, after their initial definitions are approved. It is not the
-operations' scheduler, state store, claim coordinator or ongoing source of truth.
+**Status: creator architecture confirmed after three rounds of interrogation.**
+This section defines what to build, not what already exists. This workspace owns
+initial preparation and creation, not generated operations' execution or revisions.
 
-Next discuss its inputs and interaction model, how definition bundles are assembled
-and approved, safe selection/adaptation of prior structures, validation, creation
-and provisioning assistance, and what runtime source/templates it maintains.
-Pre-creation preparation accounting and the initial approval/provisioning interface
-also belong to that discussion; they are not silently prescribed by this contract.
-No generator implementation or detailed creator architecture is committed by this
-document.
+### 20.1 Product and user journey
+
+The product is a **Copilot-driven workspace repository**, not a separate hosted
+service or a new conversational application. An operator starts from an intent, an
+existing definition or an explicitly selected predecessor's approved revision.
+
+```text
+intent + scope + preparation threshold
+             |
+        interrogate <---- scoped read-only inspection
+             |
+  select supported base + curated/predecessor structure
+             |
+      assemble candidate definition bundle
+             |
+   deterministic validation + complete review report
+             |
+  real human approval of exact bundle and creation plan
+             |
+  journalled materialisation -> verified inactive handover
+```
+
+The Creator coordinates the conversation and calls deterministic tools. It asks for
+missing decisions, explains unsupported capabilities and can resume a blocked
+preparation. It cannot convert its own opinion into validation, approval or readiness.
+
+### 20.2 Responsibilities and generation boundary
+
+| Component | Responsibility |
+|---|---|
+| Creator agent | Interrogation, explanation, preparation planning and tool orchestration |
+| Preparation skills | Structured questioning, explicit-source inspection, assembly, review and handover guidance |
+| Curated starting points | Supported manifest/specification patterns and agent/skill templates |
+| Runtime base | Tested controller/workflow safety machinery, copied as a versioned source snapshot |
+| Assembly tools | Resolve approved base/template references, compile the candidate tree and produce its manifest |
+| Validation tools | Check structure, executable closure, privacy, bounds and test evidence; emit explicit diagnostics |
+| Approval channel | Capture authenticated human consent for a precise candidate and resource plan |
+| Materialiser | Enforce approval, create/verify GitHub resources and journal partial results |
+| Credit ledger | Keep measured/estimated preparation credits and corrections distinct |
+
+Copilot may generate operation-specific specifications, agent/skill content and
+bounded adapters. It must not rewrite claims, authority, privacy, credit enforcement
+or publication guards for one operation. Workflow safety logic comes from the
+maintained base; supported parameters are compiled, not arbitrary model-authored
+replacement workflows. Unsupported safety requirements need a separately reviewed,
+tested base change before preparation can use them.
+
+Changing this repository's base does not hotfix existing operations. Newly created
+operations copy a selected supported release; existing repositories continue with
+their own source until their operator approves a local revision.
+
+### 20.3 Private preparation workspace and lifecycle
+
+Keep one resumable private workspace per preparation **outside this public checkout**.
+It holds the intent/decisions, source references, candidate bundle, validation/review
+reports, approval receipts, credit ledger and creation journal. Raw conversations and
+payloads have explicit retention. Credentials are never bundle or journal contents.
+
+```text
+interrogating -> assembling -> validating -> awaiting approval
+             -> approved -> materialising -> handed over
+```
+
+Failures pause at a recorded checkpoint with a reason. Abandonment does not delete
+created resources. Draft changes invalidate applicable validation/approval; materialisation
+uses a sealed approved snapshot, not a mutable working directory.
+
+Model tools may edit candidate content, not trusted approval/journal records or
+privileged helper source. The isolation boundary must be verified, not assumed from
+placing files in different directories. Keep privileged credentials in the trusted
+tool boundary; Copilot receives safe results, not tokens.
+
+### 20.4 Inspection and reuse
+
+V1 uses explicit predecessor repository/revision references and curated starting
+points; no automatic operation discovery or ranking catalogue.
+
+Inspect imported definitions as quarantined data. Do not run their code or auto-load
+their agents, skills, hooks, workflows or MCP configuration into the Creator. Map
+supported structure onto the chosen tested base and show every adaptation in review.
+Missing approval/provenance, incompatible schemas and unsupported features are
+reported; never silently drop features or pretend a source was verified.
+
+Explicitly scoped read-only target inspection may ground criteria, probes and task
+design after access/confidentiality checks. Preparation never claims targets, changes
+target branches, opens proposals or executes untrusted target code. Generated-component
+tests use synthetic data and isolated environments without privileged credentials.
+Live migration rehearsals require a separately approved operation.
+
+Private sources remain private. A public destination requires a separately reviewed
+sanitised export; full private provenance is not copied into public records (§12).
+
+### 20.5 Bundle, review and authentic approval
+
+The candidate contains the complete manifest, specification, local agents/skills,
+runtime/workflow snapshot, policy files, tool/dependency pins, overview and generated
+component tests. The review report includes:
+
+- Intent, scope, stages/tasks, acceptance, bounds, authority and privacy policy.
+- Planned owner/name, visibility, definition/records branches and associated board.
+- Base/template/source revisions, generated differences and source/export provenance.
+- Validation/test results, required external bindings and known readiness blockers.
+- Preparation credits, clearly distinguishing measurements, estimates and uncertainty.
+
+Validate before asking approval: schemas, references and paths, complete executable
+closure, unchanged tested safety base, generated-component tests, privacy/export
+requirements and the consistency of the creation plan. Do not execute untrusted
+candidate tests with creation credentials.
+
+Copilot may invoke materialisation after **real conversational approval**. A trusted
+channel captures consent from the registered operator/delegate and binds an approval
+receipt to the exact payload digest, creation plan, visibility and runtime release.
+The model cannot grant itself authority by editing a draft or passing `approved: true`.
+
+The materialiser verifies that receipt and recomputes the digest from the exact bytes
+it will publish. Changed contents, destination or release require renewed review and
+approval. Resumption uses the same sealed payload and receipt, not a newly generated
+approximation. If the pinned Copilot integration cannot prove authentic consent,
+materialisation blocks: natural-language assertions are not a fallback.
+
+### 20.6 Preparation credit accounting
+
+Preparation has its own declared AI-credit threshold and ledger, separately from the
+operation's execution envelope. Preserve its usage/basis in handover and provenance.
+Do not deduct it silently from the new execution budget or call an estimate a measurement.
+
+Each attributable call has one current accounting basis: measured, estimated or unknown.
+Use measured credits plus outstanding meaningful estimates and reservations to decide
+whether another automatic call fits the threshold. Label mixed totals as partly
+estimated. Missing measurement may use a declared estimate; missing both requires
+operator resolution, not fabricated zero. Estimates do not establish a hard ceiling.
+
+When authoritative usage arrives, replace the matching estimate through an audit
+correction, never add both. Deduplicate reports and do not assign unrelated account-wide
+usage to one preparation. Stop new automatic calls at the threshold and disclose
+uncertainty/in-flight overshoot. Deterministic inspection/recovery does not authorise
+more inference. Generated operations still require authoritative usage before
+execution (§8); estimated preparation accounting cannot weaken their meter gate.
+
+### 20.7 Materialisation, recovery and handover
+
+The trusted materialiser creates the approved operation repository, definition and
+records branches, required protections and associated board, then transfers the
+approved definition and records. Configure bootstrap as inactive; pushing workflows
+or enabling the platform must not start target work or spend the execution envelope.
+
+Journal intended resources before effects and verified ids/results afterwards.
+On retry, verify both remote identity and its association with this preparation and
+approved payload before reusing a resource. Names alone are not ownership evidence.
+An interrupted response or unrelated name collision blocks for explicit resolution.
+Never silently overwrite, rename or delete existing resources, including partial
+resources created by this preparation.
+
+Handover requires the necessary created resources to exist and match their approved
+settings. Transfer approval, provenance, preparation usage/basis, creation evidence
+and a setup/readiness report into operation-owned records. The result is **inactive**.
+Access grants, installations, credentials and other external bindings remain explicit
+operator work. Missing bindings are readiness blockers; failed required creation steps
+are partial/blocked preparation, not a completed handover.
+
+A later preparation-usage correction may be supplied as a receipt for import. It is
+not permission to become the operation's live ledger or updater. V1 ends at initial
+creation/handover; local operation tools manage subsequent revisions.
+
+### 20.8 Planned repository layout
+
+Illustrative build structure; none of these agents/helpers are implemented yet:
+
+```text
+.github/agents/creator.agent.md
+.github/skills/
+  interrogate-operation/SKILL.md
+  inspect-operation-source/SKILL.md
+  assemble-operation/SKILL.md
+  review-operation/SKILL.md
+  materialise-operation/SKILL.md
+src/creator/
+  preparation.ts       # lifecycle and checkpoint model
+  bundle.ts            # assembly, closure and exact snapshot identity
+  validate.ts          # structured diagnostics and validation gates
+  credits.ts           # measured/estimated ledger and correction rules
+  approval.ts          # verified receipt contract; no model self-approval
+  materialise.ts       # approved plan, journal and resume orchestration
+  github.ts            # restricted, effectful GitHub resource operations
+runtime/               # maintained operation-owned controller/workflow base
+templates/             # curated specifications, agents, skills and policy patterns
+schemas/               # preparation, manifest, review and receipt contracts
+tests/                 # pure-model, isolation and authorised sandbox integration tests
+fixtures/              # preparation and operation contract examples
+.tool-versions         # mise-managed helper/runtime tool versions
+```
+
+Keep pure lifecycle, identity, accounting and validation rules separate from filesystem,
+GitHub and Copilot effects. Tool interfaces are bounded operations, not an unrestricted
+GitHub API or shell gateway. The private workspace and credentials are not directories
+to add to this public source tree.
+
+### 20.9 Implementation sequence and acceptance
+
+1. **Prove the boundaries.** Prototype authentic conversational approval, safe
+   credential separation, source/configuration quarantine and usage attribution/
+   labelled estimation for the pinned CLI. Unsupported authority/isolation blocks
+   materialisation; do not paper over gaps with model assertions.
+2. **Establish the tested foundation.** Implement schemas and the operation runtime
+   workstream in §16, with versioned test evidence and safe inactive bootstrap.
+   Copied code must actually exist and pass its required tests before calling a
+   bundle validated or independently runnable.
+3. **Build pure preparation tools.** Lifecycle/checkpoints, template assembly, exact
+   digest/plan validation, review output and credit correction logic. Use
+   property-based tests for identity stability, accounting and retry invariants.
+4. **Add the Creator experience.** Agent/skills for intent interrogation, scoped
+   read-only inspection and explicit predecessor adaptation into private workspaces.
+   Exercise existing unstaged/staged fixtures; keep imported configuration inert.
+5. **Materialise and recover.** Create authorised sandbox repositories/boards,
+   transfer records, verify inactive behaviour and inject partial failures. Repeated
+   calls must resume verified owned resources without duplicates or unrelated writes.
+6. **Complete handover and harden.** Test private-to-public export, missing permissions,
+   changed payloads, forged approval, unknown/estimated credits and external readiness
+   blockers. Do not label published files as a successful handover when required
+   resources/protections failed.
+
+The end-to-end acceptance is: an intent becomes a reviewed, tested and genuinely
+approved bundle; the creator materialises exactly that bundle into the intended
+repository and associated resources; the operation stays inactive; the operator
+receives truthful provenance, usage and setup blockers; rerunning after interruption
+does not duplicate or corrupt resources.
 
 ## Sources for capability checks
 
