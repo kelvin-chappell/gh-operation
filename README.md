@@ -1,9 +1,10 @@
 # gh-operation
 
-This repository will **create repositories that define concrete operations**. Each
-operation has exactly one independently runnable **Operation Repository**, containing
-its domain context, specification, agent definitions, skills and dev container setup.
-Those repositories run and manage their operations, not this creator repository.
+**One creation session, one execution session.** An operator uses a single Copilot
+session here to generate a complete operation repository. They then open its dev
+container and use one Copilot session there to start and coordinate the whole operation
+through completion. Each generated repository contains one operation's context,
+definition, agents, skills, environment and usable end-to-end procedures.
 
 **Status: initial agent-context base implemented.** The Creator agent, preparation
 skill and `templates/operation/` provide Markdown-first definitions, four operational
@@ -30,6 +31,15 @@ asks for an approved private workspace outside this checkout. The template is a
 draft with explicit `{{...}}` fields, not an approved runnable operation. Review those
 fields and the complete definition within the session before approval.
 
+**Quick assembly is the default:** use supplied facts and existing templates, resolve
+essential decisions and deliver a complete inactive repository in the same session.
+The Creator guides the operator with pointed questions and focused grilling,
+including recommendations, challenges to ambiguous answers and follow-up rounds
+until the essential decisions are settled.
+Drafts may contain pending decisions while assembling; they are not the finished
+product. Creation does not perform target discovery or changes. Multiple agents and
+checkpoint invocations can be coordinated within the subsequent execution session.
+
 Dev container creation supplies Copilot and `gh`, so neither is declared in
 `.tool-versions`. The retained pin is for the dev container generator. There is no
 Node dependency, application build or process-triggering workflow. Record actual
@@ -53,8 +63,8 @@ policy applies here and in generated operations, separately from human approval.
 
 ## What this repository will do
 
-Provide a **Creator agent**, preparation skills, a maintained agent-context base, curated
-starting points and deterministic validation/materialisation tools:
+Provide a **Creator agent**, preparation skills and maintained agent-context starting
+points, using existing session/platform tools and only necessary small helpers:
 
 ```text
 intent -> interrogate/inspect -> assemble -> validate -> human approval
@@ -68,10 +78,10 @@ credit accounting and creation journals live in resumable private workspaces out
 this public checkout. Explicit predecessor revisions are inspected as quarantined
 data and adapted onto a supported base, not automatically loaded into the Creator.
 
-Copilot may invoke materialisation after conversational approval, but a trusted human
-receipt must bind the exact bundle and destination. Deterministic tools verify that
-receipt, create the repository/branches/protections/board and recover only verified
-owned partial resources. They never silently overwrite, rename or delete resources.
+The operator reviews and approves exact contents and destination within the creation
+session. Available tools materialise approved resources and recover only verified
+owned partial resources. A hypothetical custom materialiser is not a dependency.
+Never silently overwrite, rename or delete resources.
 
 Preparation has a separate AI-credit threshold. Label estimates distinctly, combine
 them with measured usage/reservations for continuation decisions, and replace them
@@ -82,6 +92,11 @@ Handover transfers the approved definition, approval/provenance, usage and setup
 report into operation-owned records. External access setup remains explicit operator
 work. The operation is **inactive**, never automatically started by creation.
 V1 is initial preparation/creation only, not a fleet manager or central updater.
+
+Complete means the next session has what it needs without returning here or building
+missing machinery. Human approvals, merge decisions and external prerequisites remain
+explicit; blockers or exhausted resources produce an incomplete outcome, not a false
+promise of single-session success.
 
 ## What the generated repositories do
 

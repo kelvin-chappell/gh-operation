@@ -5,6 +5,35 @@ description: Prepare a new operation definition, resume a private draft, or adap
 
 # Prepare an operation
 
+The deliverable is a complete operation repository, produced in this session, that
+supports the whole operation in one subsequent coordinating Copilot session.
+Preparation does not run the
+operation. Account/scope answers define future discovery, not permission to perform
+it now. Live target enumeration or inspection requires separate explicit
+authorisation for preparation evidence; reconnaissance, builds, migration and
+proposal publication remain operational activities. Apply this boundary to delegated
+agents too. Record unknown target facts as pending decisions or execution-time checks.
+
+## Default: quick assembly
+
+Assemble supplied facts onto `templates/operation/` and produce a complete inactive
+repository. Use existing context and readily available authoritative references only
+where a fact is needed to write the files. Use focused grilling to settle essential
+decisions quickly; avoid speculative research, repetitive questions and additional
+machinery.
+
+Ask focused questions for missing decisions needed to make the operation operable.
+Budgets, versions, resource bindings and approval may be pending during drafting,
+but essential gaps must be resolved before calling the result complete. Repository-
+specific facts legitimately learned during execution need explicit discovery
+procedures, not a precomputed target inventory.
+
+Perform assembly, review and operator approval within the creation session. Check
+that the next session can start, discover, act, review, record, reconcile and finish
+using the supplied guidance and available tools. Local draft files are an intermediate
+result. Publishing GitHub resources requires approval of their exact destination;
+activation and target execution belong exclusively to the generated repository.
+
 ## 1. Establish the preparation
 
 Read the root `CONTEXT.md` and
@@ -13,19 +42,37 @@ Apply [ADR 0011](../../../docs/adr/0011-copilot-session-execution.md) for execut
 preparation and operation work begin within Copilot sessions in dev containers.
 Use the container-provided Copilot and `gh`; record their actual versions in
 preparation evidence rather than declaring them in `.tool-versions`.
-Confirm the operator, intent, preparation AI-credit threshold and an operator-owned
-private workspace outside this checkout. Obtain approval for that workspace path
+Record the supplied operator, intent and preparation AI-credit threshold; mark missing
+values pending for a draft. Confirm an operator-owned workspace outside this checkout.
+Obtain approval for that workspace path
 before writing there. Record the preparation's standing, decisions, usage basis
 and unresolved questions there. Resume an existing draft instead of replacing it.
 
-Complete when the intent, authority, workspace and accounting basis are explicit.
-Unknown usage needs a labelled, coverage-supported estimate or blocks continuation;
-it is not zero.
+Complete when the intent and workspace permit assembly and unknown authority/accounting
+facts are explicitly pending. Never label unknown usage as zero. Formal budget
+continuation decisions require measured usage or a labelled, coverage-supported estimate.
 
 ## 2. Interrogate the definition
 
-Resolve every `{{...}}` field in `templates/operation/OPERATION.md` with the operator.
-Ask related questions together; distinguish a decision from your recommendation.
+Populate `templates/operation/OPERATION.md` from supplied facts and actively guide
+the operator through the decisions required to complete it:
+
+1. Map unresolved decisions and their dependencies. Use answers already supplied;
+   look up readily available facts yourself within the preparation boundary.
+2. Ask a focused round of pointed, numbered questions whose prerequisites are
+   settled. Give a recommended answer and its consequence for each. Batch related
+   independent decisions; defer questions that depend on unanswered ones.
+3. Grill vague, conflicting or unworkable answers with concrete examples and
+   trade-offs. Distinguish the operator's decision from your recommendation and
+   confirm consequential choices rather than silently treating suggestions as consent.
+4. Record answers directly in the definition and recompute the next question round.
+   Continue guiding until all essential branches are settled; pending fields are
+   temporary drafting aids, not the end of interrogation.
+5. Present the resulting intent, scope, tasks, acceptance, limits and completion
+   criteria concisely, and obtain confirmation of shared understanding before final
+   approval. If the operator pauses or declines a necessary decision, preserve the
+   draft and state the specific blocker rather than inventing an answer.
+
 For staged work, define ordered milestones, adjacent transitions, deterministic
 stage detection and destination acceptance. For unstaged work, define one task and
 final acceptance.
@@ -36,8 +83,9 @@ Every qualification and acceptance check needs a command or API query, expected
 result and an explicit failure outcome. Scope read-only target inspection before
 using it; preparation performs no target actions or untrusted builds.
 
-Complete when each field has an answer or a named blocker. Blockers cannot become
-invented defaults.
+Complete when essential definition decisions are answered and confirmed, and
+execution-time facts have explicit discovery/check procedures. Genuine unresolved
+decisions mean interrogation is incomplete, not that placeholder assembly succeeded.
 
 ## 3. Assemble agent context
 
@@ -49,8 +97,9 @@ where needed. Keep the role boundaries and skill pointers reachable.
 Every agent must declare an explicit `model` in its YAML frontmatter. Start from
 the role-specific defaults; adapt actors to the operation's actual task complexity.
 All non-reviewer agents must use OpenAI models; the single `reviewer` uses Anthropic.
-Confirm each selected model is available in the session and permitted by the
-operation's data-handling policy. Include selections and their rationale in review.
+Record model availability and data-handling approval as pending until verified.
+Before invoking those agents, confirm the model is available in the session and
+permitted by policy. Include selections and their rationale in review.
 Unavailable or disallowed models block that role until a replacement is reviewed;
 use no silent substitution.
 
@@ -70,8 +119,11 @@ For an explicit predecessor, inspect its selected approved revision as data. Rec
 provenance and every adaptation to this base. Private-to-public reuse requires a
 human-reviewed sanitised export; otherwise block the public destination.
 
-Complete when the bundle has no unresolved placeholders, every reference resolves,
-and its agents have operation-specific tasks and checkable completion criteria.
+Complete assembly when every local reference resolves and agents have operation-
+specific tasks and checkable completion criteria. Describe how one supervising
+session invokes the roles and advances checkpoints until completion. Include usable
+record, claim, accounting and publication procedures rather than references to
+unimplemented services. Review remaining gaps before final handover.
 
 ## 4. Review and obtain approval
 
@@ -97,18 +149,23 @@ approval through a verified human channel binding their identity, payload digest
 and destination. Changes require renewed review and approval. If this channel is
 unavailable, stop with `awaiting verified approval`; do not create GitHub resources.
 
-## 5. Materialise and hand over only when supported
+## 5. Hand over a complete repository
 
-Use a verified materialiser, never improvised approval flags. It must verify the
-receipt and exact bundle, journal created resource identities, and resume only
-verified owned resources. An existing name alone is not ownership. Unexpected
-resources or settings block creation; leave them intact.
+Use available session/platform tools to materialise only the approved contents and
+destination. Record genuine operator approval and created resource identities.
+Resume only verified owned resources; an existing name alone is not ownership.
+Unexpected resources/settings block creation and remain intact. A separate custom
+materialiser application is not a prerequisite; missing required capabilities are
+blockers, not hypothetical tools to cite as if they exist.
 
 Verify repository visibility, protected definition/records separation, associated
 board and transferred approval/provenance/usage. Report missing external setup
 separately from failed creation. Handover is complete only when required resources
 and records are verified and the operation is inactive.
 
-The current base supports local preparation and structural review only. Authentic
-approval capture, materialisation and target execution are not implemented. End
-with a truthful blocked report rather than claiming a repository was created.
+Handover names the repository location and entry point for the next session, approved
+goal/bounds, supplied procedures and any external prerequisites. The operator must
+not need another creator session or missing implementation to carry out the operation.
+If essential gaps remain, label the result incomplete and state them plainly.
+Single-session completion never permits bypassing human review or claiming unfinished
+work succeeded.

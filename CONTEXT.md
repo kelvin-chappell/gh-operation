@@ -2,6 +2,39 @@
 
 The language for undertakings carried out over a collection of repositories.
 
+## Purpose of this repository
+
+`gh-operation` enables an operator, in one Copilot session in a dev container, to
+generate a **complete operation repository** from an intent. Preparation should be
+quick: assemble the facts, resolve essential decisions with the operator and produce
+the repository contents using existing templates and tools.
+
+The Creator actively guides the operator to that result through pointed questions
+and grilling. It recommends concrete answers, challenges vague or contradictory
+requirements and follows up until essential decisions are settled. Questions come
+in focused rounds, covering decisions whose prerequisites are already known; facts
+are assembled by the Creator rather than turned into homework for the operator.
+Speed means purposeful questioning and reuse, not skipping decisions or handing
+over unresolved placeholders as a complete repository.
+
+The operator then opens that repository in its own dev container. In **one Copilot
+session there**, they can authorise the start and coordinate the whole operation
+through discovery, action, adversarial review, verification and completion. Multiple
+agents and checkpoint invocations are activities within that coordinating session,
+not reasons to require a new top-level session for each step.
+
+The generated repository must contain the context, definitions, agents, skills,
+environment configuration and usable procedures needed for that end-to-end journey.
+It must not depend on returning to this creator or developing missing machinery
+before it can operate. An incomplete draft is an intermediate result, not the normal
+finished product.
+
+Creation and execution remain distinct: generating files does not discover or change
+targets and does not activate the operation. Human decisions and external prerequisites
+remain explicit. One-session completion is the intended supported journey, not a
+promise to bypass blockers, merge gates or resource limits. If something prevents
+completion, record an incomplete outcome rather than claiming success.
+
 ---
 
 ## The unit of work
@@ -22,8 +55,9 @@ exactly one operation, together with its operational record. Each operation has
 exactly one such repository, created after its initial definition has been approved.
 
 **Preparation** — Turning an intent into an approved operation definition and
-creating its operation repository. Its AI-credit limit and usage are accounted for
-separately from operational execution.
+creating its complete operation repository within one creator session, ready for
+the operator's end-to-end execution session. Its AI-credit limit and usage are
+accounted for separately from operational execution.
 
 **Creator** — The agent that governs preparation, bringing interrogation, assembly,
 validation and repository creation together. It does not supervise the resulting

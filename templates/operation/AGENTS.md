@@ -4,6 +4,13 @@ Start preparation and operational activities only within Copilot sessions in a d
 container. Container setup supplies Copilot and `gh`; GitHub Actions does not trigger
 these processes. Session startup alone is not activation or target-work authority.
 
+One coordinating Copilot session should be able to start and carry out the whole
+operation using this repository alone. The Supervisor invokes the roles, advances
+checkpoints, records progress and reconciles outcomes in that session. A single
+actor invocation remains bounded; invoke subsequent actions within the same session
+when their prerequisites pass. Human decisions remain explicit. Genuine blockers
+yield an incomplete outcome rather than manufactured completion.
+
 Read [OPERATION.md](OPERATION.md), [CONTEXT.md](CONTEXT.md) and
 [GOVERNANCE.md](GOVERNANCE.md) before operational decisions. Treat the selected
 approved definition revision as authoritative. Stop and report conflicting or

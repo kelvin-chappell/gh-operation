@@ -5,6 +5,14 @@ operation has exactly one Operation Repository, and each Operation Repository
 defines exactly one operation.** Those repositories, not this creator repository,
 run and manage their operations.
 
+**Product purpose:** one operator session here generates a complete operation
+repository; one coordinating session there can start and complete its operation.
+`CONTEXT.md` defines this current journey. A pending draft is an intermediate result,
+not the normal deliverable. Supplied procedures must use available tools and require
+neither a return to the creator nor future application/runtime development.
+Multiple agent/checkpoint invocations remain within that execution session, subject
+to human decisions, resource limits and truthful incomplete outcomes when blocked.
+
 **Status: initial agent-context base implemented.** ADR 0010 records the operator's
 correction: operation repositories contain Markdown context, agents, skills and a
 dev container configuration, not a copied deterministic application. ADR 0011
